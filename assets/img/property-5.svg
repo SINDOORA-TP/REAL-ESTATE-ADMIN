@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="p5Sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141a17" />
+      <stop offset="100%" stop-color="#080c0a" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#p5Sky)" />
+  <!-- Sprawling Green Valley Estate Villa -->
+  <polygon points="150,380 280,220 520,220 650,380" fill="#151917" stroke="#C6A15B" stroke-width="2" />
+  <!-- Glass Center Lounge -->
+  <rect x="300" y="240" width="200" height="130" fill="#FFEAB8" opacity="0.85" rx="2" />
+  <rect x="200" y="300" width="80" height="70" fill="#E5C98B" opacity="0.75" />
+  <rect x="520" y="300" width="80" height="70" fill="#E5C98B" opacity="0.75" />
+  <!-- Water Terrace -->
+  <rect x="100" y="420" width="600" height="80" fill="#005f73" opacity="0.5" />
+  <line x1="100" y1="420" x2="700" y2="420" stroke="#E5C98B" stroke-width="2" />
+</svg>
+

@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="skyGrad" cx="50%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#181512" />
+      <stop offset="45%" stop-color="#0c0c0c" />
+      <stop offset="100%" stop-color="#050505" />
+    </radialGradient>
+    <linearGradient id="towerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0a0a0a" />
+      <stop offset="50%" stop-color="#141414" />
+      <stop offset="100%" stop-color="#080808" />
+    </linearGradient>
+    <linearGradient id="warmLight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFE8B2" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#C6A15B" stop-opacity="0.2" />
+    </linearGradient>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Deep Night Sky -->
+  <rect width="100%" height="100%" fill="url(#skyGrad)" />
+
+  <!-- Distant Background Towers Silhouettes -->
+  <rect x="250" y="380" width="140" height="700" fill="#0d0d0d" opacity="0.6" />
+  <rect x="420" y="320" width="160" height="760" fill="#0f0f0f" opacity="0.7" />
+  <rect x="1350" y="340" width="180" height="740" fill="#0e0e0e" opacity="0.6" />
+  <rect x="1560" y="420" width="130" height="660" fill="#0a0a0a" opacity="0.5" />
+
+  <!-- Central Luxury Residential Skyscraper Silhouette -->
+  <polygon points="860,1100 860,180 960,120 1060,180 1060,1100" fill="url(#towerGrad)" stroke="#221e16" stroke-width="2" />
+  <!-- Spire & Crown -->
+  <polygon points="950,120 960,40 970,120" fill="#C6A15B" filter="url(#softGlow)" />
+  <line x1="960" y1="40" x2="960" y2="10" stroke="#E5C98B" stroke-width="2" />
+  <circle cx="960" cy="10" r="4" fill="#E5C98B" filter="url(#softGlow)" />
+
+  <!-- Architectural Penthouse Glass Atrium with Warm Illumination -->
+  <polygon points="880,240 1040,240 1040,320 880,320" fill="url(#warmLight)" opacity="0.65" filter="url(#softGlow)" />
+  
+  <!-- Architectural Terraces & Balconies with Ambient Gold Lights -->
+  <!-- Level 1 -->
+  <rect x="890" y="360" width="45" height="18" rx="2" fill="#E5C98B" opacity="0.75" filter="url(#softGlow)" />
+  <rect x="985" y="360" width="45" height="18" rx="2" fill="#C6A15B" opacity="0.4" />
+  <!-- Level 2 -->
+  <rect x="890" y="420" width="45" height="18" rx="2" fill="#C6A15B" opacity="0.5" />
+  <rect x="985" y="420" width="45" height="18" rx="2" fill="#FFE8B2" opacity="0.8" filter="url(#softGlow)" />
+  <!-- Level 3 -->
+  <rect x="890" y="480" width="45" height="18" rx="2" fill="#E5C98B" opacity="0.7" />
+  <rect x="945" y="480" width="35" height="18" rx="2" fill="#E5C98B" opacity="0.6" />
+  <rect x="990" y="480" width="40" height="18" rx="2" fill="#C6A15B" opacity="0.4" />
+  <!-- Level 4 -->
+  <rect x="890" y="540" width="50" height="18" rx="2" fill="#FFE8B2" opacity="0.85" filter="url(#softGlow)" />
+  <rect x="980" y="540" width="50" height="18" rx="2" fill="#C6A15B" opacity="0.3" />
+  <!-- Level 5 & lower windows pattern -->
+  <g opacity="0.75">
+    <rect x="890" y="600" width="35" height="16" fill="#C6A15B" />
+    <rect x="940" y="600" width="35" height="16" fill="#E5C98B" filter="url(#softGlow)" />
+    <rect x="990" y="600" width="40" height="16" fill="#FFE8B2" />
+    <rect x="890" y="660" width="45" height="16" fill="#E5C98B" />
+    <rect x="980" y="660" width="45" height="16" fill="#C6A15B" opacity="0.5" />
+    <rect x="890" y="720" width="35" height="16" fill="#C6A15B" />
+    <rect x="940" y="720" width="45" height="16" fill="#FFE8B2" filter="url(#softGlow)" />
+    <rect x="890" y="780" width="50" height="16" fill="#E5C98B" />
+    <rect x="975" y="780" width="55" height="16" fill="#C6A15B" />
+  </g>
+
+  <!-- Left Architectural Estate Wing -->
+  <polygon points="680,1100 680,450 840,380 840,1100" fill="#101010" stroke="#1d1a15" />
+  <rect x="710" y="480" width="40" height="15" fill="#E5C98B" opacity="0.65" />
+  <rect x="770" y="480" width="40" height="15" fill="#C6A15B" opacity="0.3" />
+  <rect x="710" y="540" width="40" height="15" fill="#FFE8B2" opacity="0.7" filter="url(#softGlow)" />
+  <rect x="770" y="540" width="40" height="15" fill="#E5C98B" opacity="0.5" />
+
+  <!-- Right Architectural Glass Wing -->
+  <polygon points="1080,1100 1080,420 1250,470 1250,1100" fill="#0e0e0e" stroke="#1d1a15" />
+  <rect x="1110" y="500" width="45" height="16" fill="#FFE8B2" opacity="0.6" filter="url(#softGlow)" />
+  <rect x="1175" y="500" width="45" height="16" fill="#C6A15B" opacity="0.4" />
+  <rect x="1110" y="570" width="45" height="16" fill="#C6A15B" opacity="0.3" />
+  <rect x="1175" y="570" width="45" height="16" fill="#E5C98B" opacity="0.75" />
+
+  <!-- Atmospheric Gold Fog / Ambient Ground Glow -->
+  <radialGradient id="groundGlow" cx="50%" cy="100%" r="50%">
+    <stop offset="0%" stop-color="#C6A15B" stop-opacity="0.18" />
+    <stop offset="60%" stop-color="#141414" stop-opacity="0.05" />
+    <stop offset="100%" stop-color="#080808" stop-opacity="0" />
+  </radialGradient>
+  <rect y="600" width="100%" height="480" fill="url(#groundGlow)" />
+</svg>
+

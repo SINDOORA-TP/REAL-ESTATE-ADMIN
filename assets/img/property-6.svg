@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="p6Sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#191512" />
+      <stop offset="100%" stop-color="#080706" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#p6Sky)" />
+  <!-- Opus Pinnacle Corporate Complex -->
+  <polygon points="180,500 240,110 400,110 440,500" fill="#141414" stroke="#C6A15B" stroke-width="2" />
+  <polygon points="410,500 450,160 580,160 620,500" fill="#181818" stroke="#8c6e33" stroke-width="1.5" />
+  <!-- Glass Atrium Connector -->
+  <rect x="380" y="240" width="90" height="180" fill="#FFE8B2" opacity="0.8" />
+  <!-- Horizontal architectural stripes -->
+  <line x1="225" y1="200" x2="415" y2="200" stroke="#E5C98B" stroke-width="2" />
+  <line x1="210" y1="280" x2="425" y2="280" stroke="#E5C98B" stroke-width="2" />
+  <line x1="195" y1="360" x2="435" y2="360" stroke="#E5C98B" stroke-width="2" />
+</svg>
+
