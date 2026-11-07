@@ -208,7 +208,12 @@
         if (!url || typeof url !== 'string') return 'assets/img/property-1.svg';
         url = url.trim();
 
-        // Detect and convert Google Drive sharing links into direct browser-streamable images
+        // 1. If it's already a Data URL or local asset path, return directly
+        if (url.startsWith('data:image/') || url.startsWith('assets/') || url.startsWith('./assets/') || url.startsWith('/assets/')) {
+            return url;
+        }
+
+        // 2. Detect and convert Google Drive sharing links
         const driveMatch1 = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
         const driveMatch2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
         const driveMatch3 = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
@@ -217,12 +222,12 @@
         let fileId = null;
         if (driveMatch1 && driveMatch1[1]) fileId = driveMatch1[1];
         else if (driveMatch2 && driveMatch2[1]) fileId = driveMatch2[1];
-        else if (driveMatch3 && driveMatch3[1]) fileId = driveMatch3[1];
         else if (driveMatch4 && driveMatch4[1]) fileId = driveMatch4[1];
+        else if (driveMatch3 && driveMatch3[1] && driveMatch3[1].length > 15) fileId = driveMatch3[1];
 
         if (fileId) {
-            // Direct Google Drive high-resolution thumbnail and CDN stream endpoint
-            return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1600`;
+            // High-resolution Google Drive CDN stream (use with referrerpolicy="no-referrer")
+            return `https://lh3.googleusercontent.com/d/${fileId}`;
         }
 
         return url;

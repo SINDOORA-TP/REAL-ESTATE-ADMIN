@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
     <title>Magaram Executive Suite | Admin Portal</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/admin.css">
@@ -473,32 +474,58 @@
                     </select>
                 </div>
                 <div class="admin-form-group">
-                    <label>Preset Architectural Images</label>
-                    <select id="form-cover-preset" class="admin-select" onchange="applyPresetImage(this.value)">
-                        <option value="">Or Pick Standard Preset...</option>
-                        <option value="assets/img/property-1.svg">Luxury Penthouse Facade (Image 1)</option>
-                        <option value="assets/img/property-2.svg">Western Ghats Villa Estate (Image 2)</option>
-                        <option value="assets/img/property-3.svg">Avinashi Road Commercial Tower (Image 3)</option>
-                        <option value="assets/img/property-4.svg">R.S. Puram Signature Residence (Image 4)</option>
-                        <option value="assets/img/property-5.svg">Siruvani Foothills Orchard Estate (Image 5)</option>
-                        <option value="assets/img/property-6.svg">Saravanampatti Tech Pinnacle (Image 6)</option>
-                    </select>
+                    <label>Choose Photo Source</label>
+                    <div style="display: flex; gap: 6px; margin-top: 4px;">
+                        <button type="button" class="filter-tab-btn active" id="btn-tab-upload" onclick="switchImageTab('upload')">📁 Device File</button>
+                        <button type="button" class="filter-tab-btn" id="btn-tab-drive" onclick="switchImageTab('drive')">🔗 Google Drive</button>
+                        <button type="button" class="filter-tab-btn" id="btn-tab-preset" onclick="switchImageTab('preset')">🏛 Preset</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Google Drive Image URL Field -->
-            <div class="admin-form-group">
-                <label for="form-cover">Property Image (Google Drive Share Link or URL) *</label>
-                <input type="text" id="form-cover" class="admin-input" placeholder="Paste Google Drive share link (e.g. https://drive.google.com/file/d/.../view) or image URL" oninput="previewImageInput(this.value)" required>
-                <div style="font-size: 0.75rem; color: var(--gold-bright); margin-top: 4px;">
-                    💡 <strong>Google Drive Support:</strong> Upload photo to Google Drive &rarr; Set Share to "Anyone with the link can view" &rarr; Paste link here. It is automatically converted into a direct high-speed image stream on the live website!
+            <!-- Mode 1: Device File Upload -->
+            <div id="image-mode-upload" class="admin-form-group" style="background: rgba(198,161,91,0.06); padding: 14px; border-radius: 6px; border: 1px dashed rgba(198,161,91,0.4);">
+                <label for="form-file-input">Select Photo from Computer / Phone</label>
+                <input type="file" id="form-file-input" accept="image/*" class="admin-input" style="padding: 8px; background: #000;" onchange="handleDeviceFileUpload(event)">
+                <div style="font-size: 0.74rem; color: #4ade80; margin-top: 5px;">
+                    &#10004; Photo will be automatically optimized and saved directly into the website portfolio.
                 </div>
-                <!-- Live Preview -->
-                <div id="image-preview-box" style="display: none; align-items: center; gap: 12px; margin-top: 10px; background: #080808; padding: 10px; border-radius: 6px; border: 1px solid rgba(198,161,91,0.3);">
-                    <img id="image-preview-thumb" src="" alt="Preview" style="width: 80px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #C6A15B;" onerror="this.src='assets/img/property-1.svg'">
+            </div>
+
+            <!-- Mode 2: Google Drive / URL -->
+            <div id="image-mode-drive" class="admin-form-group" style="display: none; background: rgba(198,161,91,0.06); padding: 14px; border-radius: 6px; border: 1px dashed rgba(198,161,91,0.4);">
+                <label for="form-cover-url-input">Google Drive Share Link or URL</label>
+                <input type="text" id="form-cover-url-input" class="admin-input" placeholder="Paste link (e.g. https://drive.google.com/file/d/.../view) or web URL" oninput="handleDriveUrlInput(this.value)">
+                <div style="font-size: 0.74rem; color: var(--gold-bright); margin-top: 5px;">
+                    💡 Ensure Google Drive link has sharing set to <strong>"Anyone with the link can view"</strong>.
+                </div>
+            </div>
+
+            <!-- Mode 3: Presets -->
+            <div id="image-mode-preset" class="admin-form-group" style="display: none; background: rgba(198,161,91,0.06); padding: 14px; border-radius: 6px; border: 1px dashed rgba(198,161,91,0.4);">
+                <label for="form-cover-preset">Select Standard Luxury Preset</label>
+                <select id="form-cover-preset" class="admin-select" onchange="applyPresetImage(this.value)">
+                    <option value="">Choose Architectural Preset...</option>
+                    <option value="assets/img/property-1.svg">Luxury Penthouse Facade (Image 1)</option>
+                    <option value="assets/img/property-2.svg">Western Ghats Villa Estate (Image 2)</option>
+                    <option value="assets/img/property-3.svg">Avinashi Road Commercial Tower (Image 3)</option>
+                    <option value="assets/img/property-4.svg">R.S. Puram Signature Residence (Image 4)</option>
+                    <option value="assets/img/property-5.svg">Siruvani Foothills Orchard Estate (Image 5)</option>
+                    <option value="assets/img/property-6.svg">Saravanampatti Tech Pinnacle (Image 6)</option>
+                </select>
+            </div>
+
+            <!-- Hidden actual image value passed to property submit -->
+            <input type="hidden" id="form-cover" value="assets/img/property-1.svg">
+
+            <!-- Live Image Preview Box -->
+            <div class="admin-form-group">
+                <label>Photo Preview &amp; Verification</label>
+                <div id="image-preview-box" style="display: flex; align-items: center; gap: 14px; background: #080808; padding: 12px; border-radius: 6px; border: 1px solid rgba(198,161,91,0.35);">
+                    <img id="image-preview-thumb" src="assets/img/property-1.svg" alt="Preview" style="width: 100px; height: 65px; object-fit: cover; border-radius: 4px; border: 1px solid #C6A15B;" referrerpolicy="no-referrer" onerror="handlePreviewError(this)">
                     <div>
-                        <div style="font-size: 0.8rem; color: #4ade80;">&#10004; Direct Image Stream Ready</div>
-                        <div id="image-preview-text" style="font-size: 0.7rem; color: var(--admin-muted); word-break: break-all;"></div>
+                        <div id="image-preview-status" style="font-size: 0.82rem; color: #4ade80; font-weight: 600;">&#10004; Verified &amp; Ready for Website</div>
+                        <div id="image-preview-text" style="font-size: 0.72rem; color: var(--admin-muted); word-break: break-all; max-width: 400px;">assets/img/property-1.svg</div>
                     </div>
                 </div>
             </div>
@@ -842,27 +869,107 @@ function deleteInquiryRow(id) {
     }
 }
 
-// Google Drive Image Preview Handlers
-function previewImageInput(url) {
-    const box = document.getElementById('image-preview-box');
-    const thumb = document.getElementById('image-preview-thumb');
-    const text = document.getElementById('image-preview-text');
+// Image Source Mode Switcher
+function switchImageTab(mode) {
+    document.getElementById('btn-tab-upload').classList.toggle('active', mode === 'upload');
+    document.getElementById('btn-tab-drive').classList.toggle('active', mode === 'drive');
+    document.getElementById('btn-tab-preset').classList.toggle('active', mode === 'preset');
 
-    if (!url || !url.trim()) {
-        box.style.display = 'none';
-        return;
-    }
-
-    const formatted = PropertyStore.formatImageURL(url);
-    thumb.src = formatted;
-    text.textContent = formatted.startsWith('http') ? (formatted.length > 55 ? formatted.slice(0, 52) + '...' : formatted) : formatted;
-    box.style.display = 'flex';
+    document.getElementById('image-mode-upload').style.display = mode === 'upload' ? 'block' : 'none';
+    document.getElementById('image-mode-drive').style.display = mode === 'drive' ? 'block' : 'none';
+    document.getElementById('image-mode-preset').style.display = mode === 'preset' ? 'block' : 'none';
 }
 
-function applyPresetImage(preset) {
-    if (!preset) return;
-    document.getElementById('form-cover').value = preset;
-    previewImageInput(preset);
+// Client-side Device Image Processing (Compresses & Converts to Data URL)
+function handleDeviceFileUpload(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 1200;
+            const MAX_HEIGHT = 800;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height = Math.round((height * MAX_WIDTH) / width);
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width = Math.round((width * MAX_HEIGHT) / height);
+                    height = MAX_HEIGHT;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            document.getElementById('form-cover').value = compressedDataUrl;
+            updateImagePreview(compressedDataUrl, 'Uploaded from device (' + Math.round(compressedDataUrl.length / 1024) + ' KB)');
+        };
+        img.src = evt.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+// Google Drive Link Handler
+function handleDriveUrlInput(val) {
+    if (!val || !val.trim()) return;
+    const directUrl = PropertyStore.formatImageURL(val.trim());
+    document.getElementById('form-cover').value = directUrl;
+    updateImagePreview(directUrl, val);
+}
+
+// Preset Handler
+function applyPresetImage(val) {
+    if (!val) return;
+    document.getElementById('form-cover').value = val;
+    updateImagePreview(val, 'Standard Preset: ' + val);
+}
+
+function updateImagePreview(src, label) {
+    const thumb = document.getElementById('image-preview-thumb');
+    const text = document.getElementById('image-preview-text');
+    const status = document.getElementById('image-preview-status');
+
+    if (thumb) {
+        thumb.dataset.failed = '';
+        thumb.src = src;
+    }
+    if (text) text.textContent = label.length > 60 ? label.slice(0, 58) + '...' : label;
+    if (status) {
+        status.innerHTML = '&#10004; Verified &amp; Ready for Live Website';
+        status.style.color = '#4ade80';
+    }
+}
+
+function handlePreviewError(img) {
+    if (!img.dataset.failed) {
+        img.dataset.failed = '1';
+        const m = img.src.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if (m && m[1]) {
+            img.src = 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1600';
+            return;
+        }
+    }
+    const status = document.getElementById('image-preview-status');
+    if (status) {
+        status.innerHTML = '&#9888; Google Drive Permission Warning: Ensure file is shared as "Anyone with the link can view".';
+        status.style.color = '#facc15';
+    }
+}
+
+function previewImageInput(url) {
+    handleDriveUrlInput(url);
 }
 
 function loadAdminSettings() {

@@ -195,13 +195,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-    }); finally {
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalBtnHtml;
-                }
-            }
-        });
     });
 
     function createAlertBox(form) {
