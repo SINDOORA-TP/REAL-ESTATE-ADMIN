@@ -106,10 +106,16 @@
             align-items: center;
             gap: 12px;
             animation: slideInUp 0.3s ease;
+            max-width: 480px;
         }
         @keyframes slideInUp {
             from { transform: translateY(30px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(229, 201, 139, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(229, 201, 139, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(229, 201, 139, 0); }
         }
         .table-action-btn {
             background: none;
@@ -130,6 +136,22 @@
             background: #ef4444;
             border-color: #ef4444;
             color: #fff;
+        }
+        .filter-tab-btn {
+            background: #0d0d0d;
+            border: 1px solid rgba(198, 161, 91, 0.3);
+            color: #A09B90;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-tab-btn.active, .filter-tab-btn:hover {
+            background: #C6A15B;
+            color: #080808;
+            border-color: #C6A15B;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -153,11 +175,12 @@
             <a href="#properties-section" class="sidebar-link">
                 <span>&#9751;</span> Properties
             </a>
+            <a href="#enquiries-section" class="sidebar-link" style="display: flex; justify-content: space-between; align-items: center;">
+                <span><span>&#9993;</span> Bookings &amp; Leads</span>
+                <span id="sidebar-badge-count" style="display: none; background: #C6A15B; color: #080808; font-size: 0.65rem; padding: 1px 6px; border-radius: 10px; font-weight: 700;">0</span>
+            </a>
             <a href="#admin-settings-section" class="sidebar-link">
                 <span>&#9881;</span> Credentials &amp; Contact
-            </a>
-            <a href="#enquiries-section" class="sidebar-link">
-                <span>&#9993;</span> Enquiries &amp; Leads
             </a>
         </nav>
 
@@ -177,7 +200,14 @@
                 <h2 style="font-size: 1.35rem; margin: 0; color: var(--text-cream);">Executive Control Panel</h2>
                 <div style="font-size: 0.78rem; color: var(--gold-bright); margin-top: 2px;">Coimbatore Prime Portfolio &bull; Live Synchronization Enabled</div>
             </div>
-            <div style="display: flex; gap: 10px;">
+            
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <!-- Real-Time Booking Alert Pill -->
+                <div id="topbar-booking-pill" style="display: none; align-items: center; gap: 8px; background: rgba(198, 161, 91, 0.15); border: 1px solid #E5C98B; padding: 6px 14px; border-radius: 20px; color: #F5F1E8; font-size: 0.82rem; cursor: pointer; animation: pulseGlow 2s infinite;" onclick="document.getElementById('enquiries-section').scrollIntoView({behavior:'smooth'})">
+                    <span style="color: #facc15; font-size: 1.1rem;">🔔</span>
+                    <span><strong id="topbar-new-count">0</strong> New Site Visits</span>
+                </div>
+
                 <button type="button" class="btn btn-outline btn-sm" onclick="openCredentialsModal()">
                     &#9881; Admin &amp; Contact Details
                 </button>
@@ -201,14 +231,14 @@
                     <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">Ready for viewings</div>
                 </div>
                 <div class="widget-box">
-                    <div class="widget-label">Total Inquiries Received</div>
-                    <div class="widget-value">12</div>
-                    <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">Coimbatore inquiries</div>
+                    <div class="widget-label">Total Bookings &amp; Inquiries</div>
+                    <div class="widget-value" id="widget-total-enquiries">0</div>
+                    <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">Leads captured</div>
                 </div>
                 <div class="widget-box">
-                    <div class="widget-label">Admin Security Status</div>
-                    <div class="widget-value" style="color: #60a5fa; font-size: 1.3rem; margin-top: 6px;" id="widget-auth-status">Active</div>
-                    <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">Credentials Editable</div>
+                    <div class="widget-label">New / Pending Site Visits</div>
+                    <div class="widget-value" id="widget-new-enquiries" style="color: #facc15;">0</div>
+                    <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">Requires immediate outreach</div>
                 </div>
             </div>
 
@@ -218,7 +248,7 @@
                     <div>
                         <h3 style="font-size: 1.15rem; color: var(--text-cream); margin: 0;">Coimbatore Portfolio Listings (<span id="table-prop-count">0</span>)</h3>
                         <p style="font-size: 0.82rem; color: var(--admin-muted); margin-top: 2px;">
-                            Properties added or updated here reflect live immediately on the public website.
+                            Supports Google Drive photos &bull; Updates reflect live immediately on public website.
                         </p>
                     </div>
                     <div>
@@ -243,6 +273,53 @@
                             </tr>
                         </thead>
                         <tbody id="admin-properties-tbody">
+                            <!-- Populated dynamically by PropertyStore -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Client Bookings & Inquiries Section -->
+            <div class="admin-card" id="enquiries-section" style="margin-top: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h3 style="font-size: 1.15rem; color: var(--text-cream); margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <span>🔔 Site Visit Bookings &amp; Inquiries</span>
+                            <span id="badge-leads-total" class="badge badge-completed">0</span>
+                        </h3>
+                        <p style="font-size: 0.82rem; color: var(--admin-muted); margin-top: 2px;">
+                            Live notifications trigger instantly whenever a prospective client books a site visit.
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <button type="button" class="table-action-btn" onclick="PropertyStore.exportEnquiriesCSV()" style="font-size: 0.82rem; padding: 6px 12px; background: rgba(198,161,91,0.15);">
+                            📥 Export to CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+                    <button type="button" class="filter-tab-btn active" onclick="filterEnquiries('all', this)">All Inquiries</button>
+                    <button type="button" class="filter-tab-btn" onclick="filterEnquiries('Site Visit', this)">🔔 Site Visits Only</button>
+                    <button type="button" class="filter-tab-btn" onclick="filterEnquiries('Brochure', this)">📄 Brochure Leads</button>
+                    <button type="button" class="filter-tab-btn" onclick="filterEnquiries('New', this)">⏳ New Only</button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date &amp; Time</th>
+                                <th>Client Details</th>
+                                <th>Booking Type</th>
+                                <th>Property Interest &amp; Date</th>
+                                <th>Client Notes</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-enquiries-tbody">
                             <!-- Populated dynamically by PropertyStore -->
                         </tbody>
                     </table>
@@ -316,71 +393,11 @@
                     </div>
                 </form>
             </div>
-
-            <!-- Recent Inquiries Table -->
-            <div class="admin-card" id="enquiries-section" style="margin-top: 30px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <div>
-                        <h3 style="font-size: 1.15rem; color: var(--text-cream); margin: 0;">Coimbatore Client Inquiries &amp; Site Visits</h3>
-                        <p style="font-size: 0.82rem; color: var(--admin-muted); margin-top: 2px;">Prospective buyers for prime Coimbatore estates.</p>
-                    </div>
-                </div>
-
-                <div style="overflow-x: auto;">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Client Name</th>
-                                <th>Phone</th>
-                                <th>Type</th>
-                                <th>Property Interest</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Today, 10:15</td>
-                                <td>
-                                    <strong>Vikramaditya Rao</strong><br>
-                                    <span style="font-size: 0.78rem; color: var(--admin-muted);">vikram@apex.in</span>
-                                </td>
-                                <td>+91 98430 43210</td>
-                                <td><span style="color: var(--gold-bright); font-weight: 600;">Site Visit</span></td>
-                                <td>The Sovereign Penthouse, Race Course</td>
-                                <td><span class="badge badge-new">New</span></td>
-                            </tr>
-                            <tr>
-                                <td>Yesterday, 16:40</td>
-                                <td>
-                                    <strong>Dr. Aisha Merchant</strong><br>
-                                    <span style="font-size: 0.78rem; color: var(--admin-muted);">aisha@hospital.org</span>
-                                </td>
-                                <td>+91 98421 22334</td>
-                                <td><span style="color: var(--gold-bright); font-weight: 600;">Brochure</span></td>
-                                <td>The Elysian Sanctuary Villa, Vadavalli</td>
-                                <td><span class="badge badge-contacted">Contacted</span></td>
-                            </tr>
-                            <tr>
-                                <td>04 Nov, 14:20</td>
-                                <td>
-                                    <strong>Karan Singhania</strong><br>
-                                    <span style="font-size: 0.78rem; color: var(--admin-muted);">karan@singhania.com</span>
-                                </td>
-                                <td>+91 99444 88888</td>
-                                <td><span style="color: var(--gold-bright); font-weight: 600;">Enquiry</span></td>
-                                <td>Prestige Apex Commercial, Peelamedu</td>
-                                <td><span class="badge badge-completed">Completed</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
     </main>
 </div>
 
-<!-- ================= ADD / EDIT PROPERTY MODAL ================= -->
+<!-- ================= ADD / EDIT PROPERTY MODAL (WITH GOOGLE DRIVE SUPPORT) ================= -->
 <div class="admin-modal-backdrop" id="property-modal">
     <div class="admin-modal-box">
         <button type="button" class="admin-modal-close" onclick="closePropertyModal()">&times;</button>
@@ -456,8 +473,9 @@
                     </select>
                 </div>
                 <div class="admin-form-group">
-                    <label for="form-cover">Architectural Cover Image</label>
-                    <select id="form-cover" class="admin-select">
+                    <label>Preset Architectural Images</label>
+                    <select id="form-cover-preset" class="admin-select" onchange="applyPresetImage(this.value)">
+                        <option value="">Or Pick Standard Preset...</option>
                         <option value="assets/img/property-1.svg">Luxury Penthouse Facade (Image 1)</option>
                         <option value="assets/img/property-2.svg">Western Ghats Villa Estate (Image 2)</option>
                         <option value="assets/img/property-3.svg">Avinashi Road Commercial Tower (Image 3)</option>
@@ -465,6 +483,23 @@
                         <option value="assets/img/property-5.svg">Siruvani Foothills Orchard Estate (Image 5)</option>
                         <option value="assets/img/property-6.svg">Saravanampatti Tech Pinnacle (Image 6)</option>
                     </select>
+                </div>
+            </div>
+
+            <!-- Google Drive Image URL Field -->
+            <div class="admin-form-group">
+                <label for="form-cover">Property Image (Google Drive Share Link or URL) *</label>
+                <input type="text" id="form-cover" class="admin-input" placeholder="Paste Google Drive share link (e.g. https://drive.google.com/file/d/.../view) or image URL" oninput="previewImageInput(this.value)" required>
+                <div style="font-size: 0.75rem; color: var(--gold-bright); margin-top: 4px;">
+                    💡 <strong>Google Drive Support:</strong> Upload photo to Google Drive &rarr; Set Share to "Anyone with the link can view" &rarr; Paste link here. It is automatically converted into a direct high-speed image stream on the live website!
+                </div>
+                <!-- Live Preview -->
+                <div id="image-preview-box" style="display: none; align-items: center; gap: 12px; margin-top: 10px; background: #080808; padding: 10px; border-radius: 6px; border: 1px solid rgba(198,161,91,0.3);">
+                    <img id="image-preview-thumb" src="" alt="Preview" style="width: 80px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #C6A15B;" onerror="this.src='assets/img/property-1.svg'">
+                    <div>
+                        <div style="font-size: 0.8rem; color: #4ade80;">&#10004; Direct Image Stream Ready</div>
+                        <div id="image-preview-text" style="font-size: 0.7rem; color: var(--admin-muted); word-break: break-all;"></div>
+                    </div>
                 </div>
             </div>
 
@@ -541,7 +576,7 @@
 
 <!-- Luxury Notification Toast -->
 <div class="toast-notify" id="admin-toast">
-    <span style="color: var(--gold-bright); font-size: 1.4rem;">&#10004;</span>
+    <span style="color: var(--gold-bright); font-size: 1.4rem;" id="admin-toast-icon">&#10004;</span>
     <div id="admin-toast-msg" style="font-size: 0.9rem;">Changes published live!</div>
 </div>
 
@@ -549,9 +584,47 @@
 <script src="assets/js/properties-store.js"></script>
 
 <script>
+let currentEnquiryFilter = 'all';
+let lastSeenBookingTime = 0;
+
+// Web Audio Soft Chime Generator for Booking Notifications (zero external audio files needed)
+function playBookingChime() {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const now = audioCtx.currentTime;
+
+        // Tone 1
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(587.33, now); // D5
+        gain1.gain.setValueAtTime(0.2, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.4);
+
+        // Tone 2
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(880, now + 0.15); // A5
+        gain2.gain.setValueAtTime(0.25, now + 0.15);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.start(now + 0.15);
+        osc2.stop(now + 0.7);
+    } catch (e) {
+        // Audio policy or silent
+    }
+}
+
 // Live Admin Controller
 document.addEventListener('DOMContentLoaded', function () {
     renderAdminProperties();
+    renderAdminEnquiries();
     loadAdminSettings();
 
     // Live update price hint when typing
@@ -568,21 +641,42 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Listen for storage events across tabs
-    window.addEventListener('storage', function () {
+    // Check for new bookings broadcast on load
+    try {
+        const latest = JSON.parse(localStorage.getItem('magaram_latest_site_booking') || '{}');
+        if (latest && latest.time) {
+            lastSeenBookingTime = latest.time;
+        }
+    } catch (e) {}
+
+    // Listen for storage events across tabs (Real-Time Notification & Sync)
+    window.addEventListener('storage', function (e) {
         renderAdminProperties();
+        renderAdminEnquiries();
         loadAdminSettings();
+
+        // Check if a new site booking arrived
+        try {
+            const latest = JSON.parse(localStorage.getItem('magaram_latest_site_booking') || '{}');
+            if (latest && latest.time && latest.time > lastSeenBookingTime) {
+                lastSeenBookingTime = latest.time;
+                playBookingChime();
+                showToast(`🔔 NEW SITE VISIT BOOKED: ${latest.client} for "${latest.property}"! (Preferred Date: ${latest.date || 'Immediate'})`, '🔔');
+            }
+        } catch (e) {}
     });
 });
 
-function showToast(msg) {
+function showToast(msg, icon = '&#10004;') {
     const toast = document.getElementById('admin-toast');
     const toastMsg = document.getElementById('admin-toast-msg');
-    toastMsg.textContent = msg;
+    const toastIcon = document.getElementById('admin-toast-icon');
+    toastIcon.innerHTML = icon;
+    toastMsg.innerHTML = msg;
     toast.style.display = 'flex';
     setTimeout(() => {
         toast.style.display = 'none';
-    }, 4000);
+    }, 5500);
 }
 
 function renderAdminProperties() {
@@ -617,10 +711,12 @@ function renderAdminProperties() {
 
         const sampleTag = p.is_sample ? '<span style="font-size: 0.7rem; color: #a8a29e; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 3px; margin-left: 6px;">Sample</span>' : '';
 
+        const imageSrc = PropertyStore.formatImageURL(p.cover_image);
+
         return `
             <tr>
                 <td>
-                    <img src="${p.cover_image || 'assets/img/property-1.svg'}" alt="${p.title}" style="width: 55px; height: 38px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(198,161,91,0.3);">
+                    <img src="${imageSrc}" alt="${p.title}" style="width: 55px; height: 38px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(198,161,91,0.3);" onerror="this.src='assets/img/property-1.svg'">
                 </td>
                 <td>
                     <strong style="color: var(--text-cream);">${p.title}</strong> ${sampleTag}
@@ -641,6 +737,132 @@ function renderAdminProperties() {
             </tr>
         `;
     }).join('');
+}
+
+// Render Client Bookings & Inquiries
+function renderAdminEnquiries() {
+    const list = PropertyStore.getEnquiries();
+    const tbody = document.getElementById('admin-enquiries-tbody');
+    const totalWidget = document.getElementById('widget-total-enquiries');
+    const newWidget = document.getElementById('widget-new-enquiries');
+    const topbarPill = document.getElementById('topbar-booking-pill');
+    const topbarCount = document.getElementById('topbar-new-count');
+    const sidebarBadge = document.getElementById('sidebar-badge-count');
+    const badgeTotal = document.getElementById('badge-leads-total');
+
+    const newCount = list.filter(i => i.status === 'New').length;
+
+    if (totalWidget) totalWidget.textContent = list.length;
+    if (newWidget) newWidget.textContent = newCount;
+    if (badgeTotal) badgeTotal.textContent = list.length + ' Total';
+
+    if (newCount > 0) {
+        if (topbarPill) topbarPill.style.display = 'inline-flex';
+        if (topbarCount) topbarCount.textContent = newCount;
+        if (sidebarBadge) {
+            sidebarBadge.style.display = 'inline-block';
+            sidebarBadge.textContent = newCount;
+        }
+    } else {
+        if (topbarPill) topbarPill.style.display = 'none';
+        if (sidebarBadge) sidebarBadge.style.display = 'none';
+    }
+
+    if (!tbody) return;
+
+    // Filter
+    let filtered = list;
+    if (currentEnquiryFilter === 'New') {
+        filtered = list.filter(i => i.status === 'New');
+    } else if (currentEnquiryFilter !== 'all') {
+        filtered = list.filter(i => i.type === currentEnquiryFilter);
+    }
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--admin-muted);">No bookings found for the selected filter.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(i => {
+        let typeBadge = '<span class="badge badge-completed">Site Visit</span>';
+        if (i.type === 'Brochure') typeBadge = '<span class="badge badge-contacted">Brochure</span>';
+        else if (i.type === 'Enquiry') typeBadge = '<span class="badge" style="background: rgba(147,51,234,0.15); color: #c084fc; border: 1px solid rgba(147,51,234,0.3);">Enquiry</span>';
+
+        return `
+            <tr style="${i.status === 'New' ? 'background: rgba(229, 201, 139, 0.04);' : ''}">
+                <td style="font-size: 0.82rem; color: var(--admin-muted); white-space: nowrap;">
+                    ${i.created_at || 'Recently'}
+                </td>
+                <td>
+                    <strong style="color: var(--text-cream);">${i.name}</strong><br>
+                    <a href="tel:${(i.phone || '').replace(/\s+/g, '')}" style="color: var(--gold-bright); font-size: 0.78rem;">${i.phone || 'No phone'}</a> &bull; 
+                    <a href="mailto:${i.email}" style="color: var(--admin-muted); font-size: 0.78rem;">${i.email || 'No email'}</a>
+                </td>
+                <td>${typeBadge}</td>
+                <td>
+                    <strong style="color: var(--text-cream);">${i.property_title || 'Coimbatore Estate'}</strong>
+                    ${i.preferred_date ? `<div style="font-size: 0.76rem; color: #4ade80;">Date: ${i.preferred_date}</div>` : ''}
+                </td>
+                <td style="font-size: 0.8rem; color: var(--admin-muted); max-width: 200px;">
+                    ${i.message || '<em style="color:#666;">No bespoke notes</em>'}
+                </td>
+                <td>
+                    <select class="admin-select" onchange="changeInquiryStatus(${i.id}, this.value)" style="padding: 4px 8px; font-size: 0.76rem; width: auto; ${i.status === 'New' ? 'border-color: #facc15; color: #facc15;' : (i.status === 'Contacted' ? 'border-color: #60a5fa; color: #60a5fa;' : 'border-color: #4ade80; color: #4ade80;')}">
+                        <option value="New" ${i.status === 'New' ? 'selected' : ''}>⏳ New</option>
+                        <option value="Contacted" ${i.status === 'Contacted' ? 'selected' : ''}>📞 Contacted</option>
+                        <option value="Completed" ${i.status === 'Completed' ? 'selected' : ''}>✔ Completed</option>
+                    </select>
+                </td>
+                <td style="text-align: right; white-space: nowrap;">
+                    <button type="button" class="table-action-btn table-action-del" onclick="deleteInquiryRow(${i.id})">&#10006;</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function filterEnquiries(type, btn) {
+    currentEnquiryFilter = type;
+    document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderAdminEnquiries();
+}
+
+function changeInquiryStatus(id, newStatus) {
+    PropertyStore.updateEnquiryStatus(id, newStatus);
+    renderAdminEnquiries();
+    showToast(`Lead status updated to ${newStatus}.`);
+}
+
+function deleteInquiryRow(id) {
+    if (confirm('Delete this inquiry record?')) {
+        PropertyStore.deleteEnquiry(id);
+        renderAdminEnquiries();
+        showToast('Inquiry removed.');
+    }
+}
+
+// Google Drive Image Preview Handlers
+function previewImageInput(url) {
+    const box = document.getElementById('image-preview-box');
+    const thumb = document.getElementById('image-preview-thumb');
+    const text = document.getElementById('image-preview-text');
+
+    if (!url || !url.trim()) {
+        box.style.display = 'none';
+        return;
+    }
+
+    const formatted = PropertyStore.formatImageURL(url);
+    thumb.src = formatted;
+    text.textContent = formatted.startsWith('http') ? (formatted.length > 55 ? formatted.slice(0, 52) + '...' : formatted) : formatted;
+    box.style.display = 'flex';
+}
+
+function applyPresetImage(preset) {
+    if (!preset) return;
+    document.getElementById('form-cover').value = preset;
+    previewImageInput(preset);
 }
 
 function loadAdminSettings() {
@@ -726,6 +948,7 @@ function openAddPropertyModal() {
     document.getElementById('property-form').reset();
     document.getElementById('price-hint').textContent = '';
     document.getElementById('form-location-custom').style.display = 'none';
+    document.getElementById('image-preview-box').style.display = 'none';
     document.getElementById('btn-save-prop').textContent = 'Save & Publish Live';
     document.getElementById('property-modal').classList.add('active');
 }
@@ -770,7 +993,8 @@ function handlePropertySubmit(e) {
     const bedrooms = Number(document.getElementById('form-bedrooms').value);
     const bathrooms = Number(document.getElementById('form-bathrooms').value);
     const status = document.getElementById('form-status').value;
-    const cover_image = document.getElementById('form-cover').value;
+    const rawCover = document.getElementById('form-cover').value.trim();
+    const cover_image = PropertyStore.formatImageURL(rawCover || 'assets/img/property-1.svg');
     const description = document.getElementById('form-desc').value.trim();
     const is_featured = document.getElementById('form-featured').checked ? 1 : 0;
 
@@ -834,6 +1058,8 @@ function editProperty(id) {
     document.getElementById('form-bathrooms').value = p.bathrooms;
     document.getElementById('form-status').value = p.status;
     document.getElementById('form-cover').value = p.cover_image || 'assets/img/property-1.svg';
+    previewImageInput(p.cover_image || 'assets/img/property-1.svg');
+
     document.getElementById('form-desc').value = p.description;
     document.getElementById('form-featured').checked = !!p.is_featured;
 

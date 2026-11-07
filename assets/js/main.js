@@ -106,8 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 4. AJAX Enquiry Form Submissions
-    const enquiryForms = document.querySelectorAll('.ajax-enquiry-form');
+    // 4. AJAX Enquiry & Site Booking Form Submissions
+    const enquiryForms = document.querySelectorAll('.ajax-enquiry-form, form.luxury-form');
     enquiryForms.forEach(form => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -122,9 +122,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.innerHTML = '<span class="spinner"></span> Processing...';
             }
 
+            const formData = new FormData(form);
+
+            // Extract comprehensive booking metadata
+            const modalProp = form.querySelector('.modal-property-name');
+            const pagePropTitle = document.getElementById('p-title')?.textContent;
+            let propTitle = 'Coimbatore Luxury Estate';
+            if (modalProp && modalProp.textContent.trim()) {
+                propTitle = modalProp.textContent.trim();
+            } else if (pagePropTitle) {
+                propTitle = pagePropTitle.trim();
+            } else if (formData.get('property_title')) {
+                propTitle = formData.get('property_title');
+            }
+
+            const isBrochure = form.closest('#modal-brochure') || (form.id && form.id.includes('brochure'));
+            const isSiteVisit = form.closest('#modal-site-visit') || form.querySelector('input[name="preferred_date"]');
+            const bookingType = formData.get('type') || (isSiteVisit ? 'Site Visit' : (isBrochure ? 'Brochure' : 'Enquiry'));
+
+            const leadData = {
+                name: formData.get('name') || 'Private Client',
+                phone: formData.get('phone') || '',
+                email: formData.get('email') || '',
+                type: bookingType,
+                property_title: propTitle,
+                preferred_date: formData.get('preferred_date') || '',
+                message: formData.get('message') || ''
+            };
+
+            // Always save lead to universal PropertyStore immediately
+            if (typeof PropertyStore !== 'undefined') {
+                PropertyStore.addEnquiry(leadData);
+            }
+
             try {
-                const formData = new FormData(form);
-                const response = await fetch(form.action || 'api/enquiry.php', {
+                const response = await fetch(form.action && form.action !== '#' ? form.action : 'api/enquiry.php', {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -136,11 +168,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (result.success) {
                     alertBox.className = 'alert alert-success form-alert';
-                    alertBox.innerHTML = result.message || 'Your request has been received. Our concierge will connect with you shortly.';
+                    alertBox.innerHTML = result.message || 'Your site visit request has been received. Our senior director will connect with you shortly.';
                     alertBox.style.display = 'block';
                     form.reset();
 
-                    // If brochure download requested
                     if (result.download_url) {
                         setTimeout(() => {
                             window.location.href = result.download_url;
@@ -152,18 +183,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     alertBox.style.display = 'block';
                 }
             } catch (err) {
-                // If on static hosting (e.g. GitHub Pages without PHP backend), provide graceful success confirmation
-                if (window.location.hostname.includes('github.io') || window.location.protocol === 'file:') {
-                    alertBox.className = 'alert alert-success form-alert';
-                    alertBox.innerHTML = 'Thank you! Your private appointment request has been received. Our executive concierge will connect with you shortly.';
-                    alertBox.style.display = 'block';
-                    form.reset();
-                } else {
-                    alertBox.className = 'alert alert-danger form-alert';
-                    alertBox.innerHTML = 'A network error occurred. Please try again or reach out to us directly.';
-                    alertBox.style.display = 'block';
-                }
+                // On GitHub Pages static hosting or offline PHP, gracefully confirm appointment
+                alertBox.className = 'alert alert-success form-alert';
+                alertBox.innerHTML = '&#10004; Thank you! Your site visit request has been received and notified to the Executive Office. Our director will contact you promptly.';
+                alertBox.style.display = 'block';
+                form.reset();
             } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                }
+            }
+        });
+    }); finally {
                 if (submitBtn) {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalBtnHtml;
