@@ -41,6 +41,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($db) {
             try {
+                // Handle Admin Username and Password update if provided
+                $newAdminUser = clean_string($_POST['admin_username'] ?? '');
+                $newAdminPass = trim($_POST['admin_password'] ?? '');
+                if (!empty($newAdminUser)) {
+                    if (!empty($newAdminPass)) {
+                        $hash = password_hash($newAdminPass, PASSWORD_DEFAULT);
+                        $adminStmt = $db->prepare("UPDATE admins SET username = :u, password_hash = :p WHERE id = :id");
+                        $adminStmt->execute(['u' => $newAdminUser, 'p' => $hash, 'id' => $_SESSION['admin_id'] ?? 1]);
+                    } else {
+                        $adminStmt = $db->prepare("UPDATE admins SET username = :u WHERE id = :id");
+                        $adminStmt->execute(['u' => $newAdminUser, 'id' => $_SESSION['admin_id'] ?? 1]);
+                    }
+                    $_SESSION['admin_user'] = $newAdminUser;
+                }
+
                 $stmt = $db->prepare("
                     INSERT INTO settings (setting_key, setting_value) 
                     VALUES (:k, :v) 
@@ -49,14 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 foreach ($settingsToSave as $k => $v) {
                     $stmt->execute(['k' => $k, 'v' => $v]);
                 }
-                set_flash('success', 'Site settings and counters saved successfully.');
-                redirect(BASE_URL . '/settings.php');
+                set_flash('success', 'Admin credentials, contact details, and site settings saved successfully.');
+                redirect(BASE_URL . '/admin/settings.php');
             } catch (Exception $e) {
                 $error = 'Error saving settings: ' . $e->getMessage();
             }
         } else {
-            set_flash('info', 'Database is currently offline.');
-            redirect(BASE_URL . '/settings.php');
+            set_flash('info', 'Database is currently offline. Start MySQL in XAMPP to persist changes.');
+            redirect(BASE_URL . '/admin/settings.php');
         }
     }
 }
@@ -78,8 +93,21 @@ require_once __DIR__ . '/includes/header.php';
     <form method="POST" class="luxury-form">
         <input type="hidden" name="csrf_token" value="<?= e($csrfToken); ?>">
 
+        <!-- Admin Account Security -->
+        <h4 style="color: var(--gold-bright); border-bottom: 1px solid var(--admin-border); padding-bottom: 8px; margin-top: 10px;">Executive Account Security &amp; Credentials</h4>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="admin-user">Admin Username</label>
+                <input type="text" id="admin-user" name="admin_username" class="form-control" value="<?= e($_SESSION['admin_user'] ?? 'admin'); ?>" required>
+            </div>
+            <div class="form-group">
+                <label for="admin-pass">New Password (leave blank to keep current)</label>
+                <input type="password" id="admin-pass" name="admin_password" class="form-control" placeholder="Enter new password">
+            </div>
+        </div>
+
         <!-- Branding & Contact -->
-        <h4 style="color: var(--gold-bright); border-bottom: 1px solid var(--admin-border); padding-bottom: 8px; margin-top: 10px;">Brand & Concierge Contact</h4>
+        <h4 style="color: var(--gold-bright); border-bottom: 1px solid var(--admin-border); padding-bottom: 8px; margin-top: 30px;">Brand & Concierge Contact</h4>
         
         <div class="form-grid-2">
             <div class="form-group">
@@ -132,8 +160,8 @@ require_once __DIR__ . '/includes/header.php';
             <textarea id="s-subtext" name="hero_subtext" class="form-control" rows="2"><?= e($s['hero_subtext']); ?></textarea>
         </div>
 
-        <!-- Stats Row Settings -->
-        <h4 style="color: var(--gold-bright); border-bottom: 1px solid var(--admin-border); padding-bottom: 8px; margin-top: 30px;">Stats Row Configuration</h4>
+        <!-- Stats Row Settings (Section 1 Rule) -->
+        <h4 style="color: var(--gold-bright); border-bottom: 1px solid var(--admin-border); padding-bottom: 8px; margin-top: 30px;">Stats Row Configuration (Work Plan Section 1)</h4>
         
         <div style="background: rgba(0,0,0,0.3); padding: 18px; border-radius: 6px; border: 1px solid var(--admin-border); margin-bottom: 20px;">
             <label class="checkbox-item" style="margin-bottom: 12px;">
@@ -192,7 +220,7 @@ require_once __DIR__ . '/includes/header.php';
         <div class="form-group" style="margin-top: 14px;">
             <label class="checkbox-item">
                 <input type="checkbox" name="show_testimonials" value="1" <?= (!empty($s['show_testimonials']) && $s['show_testimonials'] == '1') ? 'checked' : ''; ?>>
-                <strong>Show Testimonials Section</strong>
+                <strong>Show Testimonials Section (Only display if real, permitted client reviews exist)</strong>
             </label>
         </div>
 

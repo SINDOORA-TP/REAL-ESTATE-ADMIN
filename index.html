@@ -6,6 +6,132 @@
     <title>Magaram Executive Suite | Admin Portal</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/admin.css">
+    <style>
+        /* Extra Modal & Notification Styling */
+        .admin-modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .admin-modal-backdrop.active {
+            display: flex;
+        }
+        .admin-modal-box {
+            background: #141414;
+            border: 1px solid #C6A15B;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 680px;
+            padding: 30px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+            position: relative;
+            color: #F5F1E8;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .admin-modal-close {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: #A09B90;
+            font-size: 1.6rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .admin-modal-close:hover {
+            color: #E5C98B;
+        }
+        .admin-form-group {
+            margin-bottom: 16px;
+        }
+        .admin-form-group label {
+            display: block;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #E5C98B;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .admin-input, .admin-select, .admin-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: #080808;
+            border: 1px solid rgba(198, 161, 91, 0.35);
+            color: #F5F1E8;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.92rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+        .admin-input:focus, .admin-select:focus, .admin-textarea:focus {
+            outline: none;
+            border-color: #E5C98B;
+            box-shadow: 0 0 10px rgba(198, 161, 91, 0.25);
+        }
+        .admin-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        @media (max-width: 640px) {
+            .admin-grid-2 { grid-template-columns: 1fr; }
+        }
+        .toast-notify {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #141414;
+            border: 1px solid #E5C98B;
+            padding: 16px 24px;
+            border-radius: 6px;
+            color: #F5F1E8;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.85);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: slideInUp 0.3s ease;
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .table-action-btn {
+            background: none;
+            border: 1px solid rgba(198, 161, 91, 0.3);
+            color: #E5C98B;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-right: 4px;
+            transition: all 0.2s;
+        }
+        .table-action-btn:hover {
+            background: #C6A15B;
+            color: #080808;
+        }
+        .table-action-del:hover {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: #fff;
+        }
+    </style>
 </head>
 <body class="admin-body">
 
@@ -27,23 +153,20 @@
             <a href="#properties-section" class="sidebar-link">
                 <span>&#9751;</span> Properties
             </a>
+            <a href="#admin-settings-section" class="sidebar-link">
+                <span>&#9881;</span> Credentials &amp; Contact
+            </a>
             <a href="#enquiries-section" class="sidebar-link">
                 <span>&#9993;</span> Enquiries &amp; Leads
-            </a>
-            <a href="#testimonials-section" class="sidebar-link">
-                <span>&#9733;</span> Testimonials
-            </a>
-            <a href="#gallery-section" class="sidebar-link">
-                <span>&#9734;</span> Gallery
-            </a>
-            <a href="#settings-section" class="sidebar-link">
-                <span>&#9881;</span> Site Settings &amp; Stats
             </a>
         </nav>
 
         <div class="sidebar-footer">
-            <div style="color: var(--gold-bright); font-size: 0.8rem; margin-bottom: 6px;">Logged in as: <strong>Admin</strong></div>
-            <a href="https://sindoora-tp.github.io/REAL-ESTATE/" target="_blank" style="color: var(--admin-muted); font-size: 0.8rem;">&larr; View Live Website</a>
+            <div style="color: var(--gold-bright); font-size: 0.8rem; margin-bottom: 6px;">Logged in as: <strong id="sidebar-admin-user">admin</strong></div>
+            <a href="https://sindoora-tp.github.io/REAL-ESTATE/" target="_blank" style="color: var(--admin-muted); font-size: 0.8rem; display: block; margin-bottom: 4px;">&larr; View Live Website</a>
+            <button type="button" class="table-action-btn" onclick="openCredentialsModal()" style="font-size: 0.72rem; padding: 3px 8px; width: 100%;">
+                &#9881; Edit Admin Account
+            </button>
         </div>
     </aside>
 
@@ -52,9 +175,13 @@
         <header class="admin-topbar">
             <div>
                 <h2 style="font-size: 1.35rem; margin: 0; color: var(--text-cream);">Executive Control Panel</h2>
+                <div style="font-size: 0.78rem; color: var(--gold-bright); margin-top: 2px;">Coimbatore Prime Portfolio &bull; Live Synchronization Enabled</div>
             </div>
-            <div>
-                <button type="button" class="btn btn-primary btn-sm" onclick="alert('In production, this opens the add property form. All PHP endpoints are in the repository.');">
+            <div style="display: flex; gap: 10px;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="openCredentialsModal()">
+                    &#9881; Admin &amp; Contact Details
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="openAddPropertyModal()">
                     + Add New Property
                 </button>
             </div>
@@ -65,146 +192,666 @@
             <div class="stat-widgets-grid">
                 <div class="widget-box">
                     <div class="widget-label">Total Properties</div>
-                    <div class="widget-value">6</div>
+                    <div class="widget-value" id="widget-total-count">0</div>
                     <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">In Active Portfolio</div>
                 </div>
                 <div class="widget-box">
                     <div class="widget-label">Available for Acquisition</div>
-                    <div class="widget-value" style="color: #4ade80;">4</div>
+                    <div class="widget-value" id="widget-available-count" style="color: #4ade80;">0</div>
                     <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">Ready for viewings</div>
                 </div>
                 <div class="widget-box">
                     <div class="widget-label">Total Inquiries Received</div>
                     <div class="widget-value">12</div>
-                    <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">Leads captured</div>
+                    <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">Coimbatore inquiries</div>
                 </div>
                 <div class="widget-box">
-                    <div class="widget-label">New / Pending Leads</div>
-                    <div class="widget-value" style="color: #60a5fa;">3</div>
-                    <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">Requires outreach</div>
+                    <div class="widget-label">Admin Security Status</div>
+                    <div class="widget-value" style="color: #60a5fa; font-size: 1.3rem; margin-top: 6px;" id="widget-auth-status">Active</div>
+                    <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">Credentials Editable</div>
                 </div>
             </div>
 
             <!-- Properties Table -->
             <div class="admin-card" id="properties-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                     <div>
-                        <h3 style="font-size: 1.15rem; color: var(--text-cream); margin: 0;">Portfolio Listings (6)</h3>
-                        <p style="font-size: 0.82rem; color: var(--admin-muted); margin-top: 2px;">Manage all public and off-market estate listings.</p>
+                        <h3 style="font-size: 1.15rem; color: var(--text-cream); margin: 0;">Coimbatore Portfolio Listings (<span id="table-prop-count">0</span>)</h3>
+                        <p style="font-size: 0.82rem; color: var(--admin-muted); margin-top: 2px;">
+                            Properties added or updated here reflect live immediately on the public website.
+                        </p>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="openAddPropertyModal()">
+                            + Add New Property
+                        </button>
                     </div>
                 </div>
 
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 70px;">Cover</th>
-                            <th>Title &amp; Location</th>
-                            <th>Category</th>
-                            <th>Valuation</th>
-                            <th>Specs</th>
-                            <th>Status</th>
-                            <th>Featured</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><img src="assets/img/property-1.svg" alt="" style="width: 55px; height: 38px; object-fit: cover; border-radius: 4px;"></td>
-                            <td>
-                                <strong style="color: var(--text-cream);">The Sovereign Penthouse [Sample]</strong>
-                                <div style="font-size: 0.78rem; color: var(--gold-primary);">Jubilee Hills, Hyderabad</div>
-                            </td>
-                            <td>Apartment</td>
-                            <td><strong style="color: var(--gold-bright);">₹14.50 Cr</strong></td>
-                            <td style="font-size: 0.82rem; color: var(--admin-muted);">6,800 sq.ft &bull; 5B/6B</td>
-                            <td><span class="badge badge-completed">Available</span></td>
-                            <td><span style="color: #facc15;">&#9733; Featured</span></td>
-                        </tr>
-                        <tr>
-                            <td><img src="assets/img/property-2.svg" alt="" style="width: 55px; height: 38px; object-fit: cover; border-radius: 4px;"></td>
-                            <td>
-                                <strong style="color: var(--text-cream);">The Elysian Garden Villa [Sample]</strong>
-                                <div style="font-size: 0.78rem; color: var(--gold-primary);">Gachibowli Outer Ring, Hyderabad</div>
-                            </td>
-                            <td>Villa</td>
-                            <td><strong style="color: var(--gold-bright);">₹22.00 Cr</strong></td>
-                            <td style="font-size: 0.82rem; color: var(--admin-muted);">9,200 sq.ft &bull; 6B/7B</td>
-                            <td><span class="badge badge-completed">Available</span></td>
-                            <td><span style="color: #facc15;">&#9733; Featured</span></td>
-                        </tr>
-                        <tr>
-                            <td><img src="assets/img/property-3.svg" alt="" style="width: 55px; height: 38px; object-fit: cover; border-radius: 4px;"></td>
-                            <td>
-                                <strong style="color: var(--text-cream);">Prestige Crown Commercial Tower [Sample]</strong>
-                                <div style="font-size: 0.78rem; color: var(--gold-primary);">Hitec City, Financial District</div>
-                            </td>
-                            <td>Commercial</td>
-                            <td><strong style="color: var(--gold-bright);">₹48.00 Cr</strong></td>
-                            <td style="font-size: 0.82rem; color: var(--admin-muted);">35,000 sq.ft</td>
-                            <td><span class="badge badge-completed">Available</span></td>
-                            <td><span style="color: #facc15;">&#9733; Featured</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;">Cover</th>
+                                <th>Title &amp; Coimbatore Location</th>
+                                <th>Category</th>
+                                <th>Valuation</th>
+                                <th>Specs</th>
+                                <th>Status</th>
+                                <th>Featured</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-properties-tbody">
+                            <!-- Populated dynamically by PropertyStore -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Admin Credentials & Site Contact Settings Section -->
+            <div class="admin-card" id="admin-settings-section" style="margin-top: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(198,161,91,0.2); padding-bottom: 12px;">
+                    <div>
+                        <h3 style="font-size: 1.15rem; color: var(--text-cream); margin: 0;">Admin Credentials &amp; Contact Details</h3>
+                        <p style="font-size: 0.82rem; color: var(--admin-muted); margin-top: 2px;">
+                            Update login credentials, concierge telephone, official email, and Coimbatore corporate address.
+                        </p>
+                    </div>
+                    <div>
+                        <span class="badge badge-completed">Instant Real-Time Sync</span>
+                    </div>
+                </div>
+
+                <form id="settings-inline-form" onsubmit="saveCredentialsAndSettings(event)">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                        <!-- Account Details -->
+                        <div style="background: #0d0d0d; padding: 20px; border-radius: 6px; border: 1px solid rgba(198,161,91,0.2);">
+                            <h4 style="color: var(--gold-bright); margin-top: 0; font-size: 0.95rem; margin-bottom: 15px; border-bottom: 1px solid rgba(198,161,91,0.15); padding-bottom: 8px;">
+                                &#128273; Admin Login Credentials
+                            </h4>
+                            <div class="admin-form-group">
+                                <label for="conf-username">Admin Username</label>
+                                <input type="text" id="conf-username" class="admin-input" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label for="conf-password">Admin Password</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <input type="password" id="conf-password" class="admin-input" required>
+                                    <button type="button" class="btn btn-outline btn-sm" onclick="togglePasswordVisibility()" style="padding: 0 10px;">
+                                        &#128065;
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="admin-form-group">
+                                <label for="conf-name">Administrator Display Name</label>
+                                <input type="text" id="conf-name" class="admin-input" required>
+                            </div>
+                        </div>
+
+                        <!-- Contact & Office Info -->
+                        <div style="background: #0d0d0d; padding: 20px; border-radius: 6px; border: 1px solid rgba(198,161,91,0.2);">
+                            <h4 style="color: var(--gold-bright); margin-top: 0; font-size: 0.95rem; margin-bottom: 15px; border-bottom: 1px solid rgba(198,161,91,0.15); padding-bottom: 8px;">
+                                &#128222; Official Contact &amp; Coimbatore Office
+                            </h4>
+                            <div class="admin-form-group">
+                                <label for="conf-phone">Concierge Phone Number</label>
+                                <input type="text" id="conf-phone" class="admin-input" placeholder="+91 98430 12345" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label for="conf-email">Official Email Address</label>
+                                <input type="email" id="conf-email" class="admin-input" placeholder="contact@magaramrealestate.com" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label for="conf-address">Coimbatore Corporate Address</label>
+                                <textarea id="conf-address" class="admin-textarea" rows="2" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px; text-align: right;">
+                        <button type="submit" class="btn btn-primary">
+                            &#10004; Save Credentials &amp; Contact Details
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <!-- Recent Inquiries Table -->
-            <div class="admin-card" id="enquiries-section">
+            <div class="admin-card" id="enquiries-section" style="margin-top: 30px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 style="font-size: 1.15rem; color: var(--text-cream); margin: 0;">Recent Client Inquiries</h3>
+                    <div>
+                        <h3 style="font-size: 1.15rem; color: var(--text-cream); margin: 0;">Coimbatore Client Inquiries &amp; Site Visits</h3>
+                        <p style="font-size: 0.82rem; color: var(--admin-muted); margin-top: 2px;">Prospective buyers for prime Coimbatore estates.</p>
+                    </div>
                 </div>
 
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Client Name</th>
-                            <th>Phone</th>
-                            <th>Type</th>
-                            <th>Property Interest</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Today, 10:15</td>
-                            <td>
-                                <strong>Vikramaditya Rao</strong><br>
-                                <span style="font-size: 0.78rem; color: var(--admin-muted);">vikram@apex.in</span>
-                            </td>
-                            <td>+91 98765 43210</td>
-                            <td><span style="color: var(--gold-bright); font-weight: 600;">Site Visit</span></td>
-                            <td>The Sovereign Penthouse</td>
-                            <td><span class="badge badge-new">New</span></td>
-                        </tr>
-                        <tr>
-                            <td>Yesterday, 16:40</td>
-                            <td>
-                                <strong>Dr. Aisha Merchant</strong><br>
-                                <span style="font-size: 0.78rem; color: var(--admin-muted);">aisha@hospital.org</span>
-                            </td>
-                            <td>+91 98111 22334</td>
-                            <td><span style="color: var(--gold-bright); font-weight: 600;">Brochure</span></td>
-                            <td>The Elysian Garden Villa</td>
-                            <td><span class="badge badge-contacted">Contacted</span></td>
-                        </tr>
-                        <tr>
-                            <td>04 Nov, 14:20</td>
-                            <td>
-                                <strong>Karan Singhania</strong><br>
-                                <span style="font-size: 0.78rem; color: var(--admin-muted);">karan@singhania.com</span>
-                            </td>
-                            <td>+91 99999 88888</td>
-                            <td><span style="color: var(--gold-bright); font-weight: 600;">Enquiry</span></td>
-                            <td>Prestige Crown Commercial</td>
-                            <td><span class="badge badge-completed">Completed</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Client Name</th>
+                                <th>Phone</th>
+                                <th>Type</th>
+                                <th>Property Interest</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Today, 10:15</td>
+                                <td>
+                                    <strong>Vikramaditya Rao</strong><br>
+                                    <span style="font-size: 0.78rem; color: var(--admin-muted);">vikram@apex.in</span>
+                                </td>
+                                <td>+91 98430 43210</td>
+                                <td><span style="color: var(--gold-bright); font-weight: 600;">Site Visit</span></td>
+                                <td>The Sovereign Penthouse, Race Course</td>
+                                <td><span class="badge badge-new">New</span></td>
+                            </tr>
+                            <tr>
+                                <td>Yesterday, 16:40</td>
+                                <td>
+                                    <strong>Dr. Aisha Merchant</strong><br>
+                                    <span style="font-size: 0.78rem; color: var(--admin-muted);">aisha@hospital.org</span>
+                                </td>
+                                <td>+91 98421 22334</td>
+                                <td><span style="color: var(--gold-bright); font-weight: 600;">Brochure</span></td>
+                                <td>The Elysian Sanctuary Villa, Vadavalli</td>
+                                <td><span class="badge badge-contacted">Contacted</span></td>
+                            </tr>
+                            <tr>
+                                <td>04 Nov, 14:20</td>
+                                <td>
+                                    <strong>Karan Singhania</strong><br>
+                                    <span style="font-size: 0.78rem; color: var(--admin-muted);">karan@singhania.com</span>
+                                </td>
+                                <td>+91 99444 88888</td>
+                                <td><span style="color: var(--gold-bright); font-weight: 600;">Enquiry</span></td>
+                                <td>Prestige Apex Commercial, Peelamedu</td>
+                                <td><span class="badge badge-completed">Completed</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>
 </div>
 
+<!-- ================= ADD / EDIT PROPERTY MODAL ================= -->
+<div class="admin-modal-backdrop" id="property-modal">
+    <div class="admin-modal-box">
+        <button type="button" class="admin-modal-close" onclick="closePropertyModal()">&times;</button>
+        <h3 id="prop-modal-title" style="margin-top: 0; color: var(--text-cream); font-size: 1.4rem; border-bottom: 1px solid rgba(198,161,91,0.25); padding-bottom: 12px;">
+            + Add New Coimbatore Property
+        </h3>
+        
+        <form id="property-form" onsubmit="handlePropertySubmit(event)">
+            <input type="hidden" id="form-prop-id" value="">
+
+            <div class="admin-form-group">
+                <label for="form-title">Property Title *</label>
+                <input type="text" id="form-title" class="admin-input" placeholder="e.g. Royal Crest Penthouse" required>
+            </div>
+
+            <div class="admin-grid-2">
+                <div class="admin-form-group">
+                    <label for="form-category">Category *</label>
+                    <select id="form-category" class="admin-select" required>
+                        <option value="Apartment">Apartment / Penthouse</option>
+                        <option value="Villa">Signature Villa</option>
+                        <option value="Commercial">Commercial Tower / Office</option>
+                        <option value="Plot">Exclusive Gated Plot</option>
+                    </select>
+                </div>
+                <div class="admin-form-group">
+                    <label for="form-location">Coimbatore Location *</label>
+                    <select id="form-location" class="admin-select" onchange="checkCustomLocation(this)" required>
+                        <option value="Race Course, Coimbatore">Race Course, Coimbatore</option>
+                        <option value="R.S. Puram, Coimbatore">R.S. Puram, Coimbatore</option>
+                        <option value="Avinashi Road, Peelamedu, Coimbatore">Avinashi Road / Peelamedu, Coimbatore</option>
+                        <option value="Saibaba Colony, Coimbatore">Saibaba Colony, Coimbatore</option>
+                        <option value="Vadavalli Foothills, Coimbatore">Vadavalli Foothills, Coimbatore</option>
+                        <option value="Saravanampatti IT Corridor, Coimbatore">Saravanampatti IT Corridor, Coimbatore</option>
+                        <option value="Siruvani Foothills, Coimbatore">Siruvani Foothills, Coimbatore</option>
+                        <option value="Ramanathapuram, Coimbatore">Ramanathapuram, Coimbatore</option>
+                        <option value="custom">Other Coimbatore Location...</option>
+                    </select>
+                    <input type="text" id="form-location-custom" class="admin-input" placeholder="Enter custom Coimbatore locality" style="display: none; margin-top: 8px;">
+                </div>
+            </div>
+
+            <div class="admin-grid-2">
+                <div class="admin-form-group">
+                    <label for="form-price">Price in Rupees (₹) *</label>
+                    <input type="number" id="form-price" class="admin-input" placeholder="e.g. 75000000 for ₹7.50 Cr" required>
+                    <div id="price-hint" style="font-size: 0.75rem; color: var(--gold-bright); margin-top: 4px;"></div>
+                </div>
+                <div class="admin-form-group">
+                    <label for="form-area">Super Built-up Area (sq.ft) *</label>
+                    <input type="number" id="form-area" class="admin-input" placeholder="e.g. 4500" required>
+                </div>
+            </div>
+
+            <div class="admin-grid-2">
+                <div class="admin-form-group">
+                    <label for="form-bedrooms">Bedrooms</label>
+                    <input type="number" id="form-bedrooms" class="admin-input" value="4">
+                </div>
+                <div class="admin-form-group">
+                    <label for="form-bathrooms">Bathrooms</label>
+                    <input type="number" id="form-bathrooms" class="admin-input" value="4">
+                </div>
+            </div>
+
+            <div class="admin-grid-2">
+                <div class="admin-form-group">
+                    <label for="form-status">Availability Status *</label>
+                    <select id="form-status" class="admin-select" required>
+                        <option value="Available">Available</option>
+                        <option value="Upcoming">Upcoming</option>
+                        <option value="Sold">Sold</option>
+                    </select>
+                </div>
+                <div class="admin-form-group">
+                    <label for="form-cover">Architectural Cover Image</label>
+                    <select id="form-cover" class="admin-select">
+                        <option value="assets/img/property-1.svg">Luxury Penthouse Facade (Image 1)</option>
+                        <option value="assets/img/property-2.svg">Western Ghats Villa Estate (Image 2)</option>
+                        <option value="assets/img/property-3.svg">Avinashi Road Commercial Tower (Image 3)</option>
+                        <option value="assets/img/property-4.svg">R.S. Puram Signature Residence (Image 4)</option>
+                        <option value="assets/img/property-5.svg">Siruvani Foothills Orchard Estate (Image 5)</option>
+                        <option value="assets/img/property-6.svg">Saravanampatti Tech Pinnacle (Image 6)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="form-desc">Architectural Description *</label>
+                <textarea id="form-desc" class="admin-textarea" rows="4" placeholder="Detail the bespoke luxury finishes, Western Ghats vistas, Italian marble, and security features..." required></textarea>
+            </div>
+
+            <div class="admin-form-group" style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="form-featured" checked style="accent-color: #C6A15B; width: 18px; height: 18px;">
+                <label for="form-featured" style="margin: 0; cursor: pointer; text-transform: none; font-size: 0.9rem; color: #F5F1E8;">
+                    Show on Homepage as <strong>Featured Landmark</strong>
+                </label>
+            </div>
+
+            <div style="margin-top: 24px; display: flex; justify-content: flex-end; gap: 12px;">
+                <button type="button" class="btn btn-outline" onclick="closePropertyModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="btn-save-prop">Save &amp; Publish Live</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================= ADMIN CREDENTIALS & CONTACT MODAL ================= -->
+<div class="admin-modal-backdrop" id="credentials-modal">
+    <div class="admin-modal-box">
+        <button type="button" class="admin-modal-close" onclick="closeCredentialsModal()">&times;</button>
+        <h3 style="margin-top: 0; color: var(--text-cream); font-size: 1.4rem; border-bottom: 1px solid rgba(198,161,91,0.25); padding-bottom: 12px;">
+            &#9881; Admin Credentials &amp; Contact Information
+        </h3>
+        
+        <form onsubmit="handleCredentialsModalSubmit(event)">
+            <h4 style="color: var(--gold-bright); margin: 15px 0 10px; font-size: 0.95rem;">Login Credentials</h4>
+            <div class="admin-grid-2">
+                <div class="admin-form-group">
+                    <label for="m-username">Username *</label>
+                    <input type="text" id="m-username" class="admin-input" required>
+                </div>
+                <div class="admin-form-group">
+                    <label for="m-password">Password *</label>
+                    <input type="text" id="m-password" class="admin-input" required>
+                </div>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="m-name">Admin Officer Name</label>
+                <input type="text" id="m-name" class="admin-input" required>
+            </div>
+
+            <h4 style="color: var(--gold-bright); margin: 20px 0 10px; font-size: 0.95rem;">Public Contact Details</h4>
+            <div class="admin-grid-2">
+                <div class="admin-form-group">
+                    <label for="m-phone">Contact Phone *</label>
+                    <input type="text" id="m-phone" class="admin-input" required>
+                </div>
+                <div class="admin-form-group">
+                    <label for="m-email">Official Email *</label>
+                    <input type="email" id="m-email" class="admin-input" required>
+                </div>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="m-address">Coimbatore Office Address *</label>
+                <textarea id="m-address" class="admin-textarea" rows="2" required></textarea>
+            </div>
+
+            <div style="margin-top: 24px; display: flex; justify-content: flex-end; gap: 12px;">
+                <button type="button" class="btn btn-outline" onclick="closeCredentialsModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">&#10004; Save &amp; Update Live Site</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Luxury Notification Toast -->
+<div class="toast-notify" id="admin-toast">
+    <span style="color: var(--gold-bright); font-size: 1.4rem;">&#10004;</span>
+    <div id="admin-toast-msg" style="font-size: 0.9rem;">Changes published live!</div>
+</div>
+
+<!-- Load Properties Store -->
+<script src="assets/js/properties-store.js"></script>
+
+<script>
+// Live Admin Controller
+document.addEventListener('DOMContentLoaded', function () {
+    renderAdminProperties();
+    loadAdminSettings();
+
+    // Live update price hint when typing
+    const priceInput = document.getElementById('form-price');
+    if (priceInput) {
+        priceInput.addEventListener('input', function () {
+            const val = Number(this.value);
+            const hint = document.getElementById('price-hint');
+            if (val > 0) {
+                hint.textContent = 'Formatted Valuation: ' + PropertyStore.formatINR(val);
+            } else {
+                hint.textContent = '';
+            }
+        });
+    }
+
+    // Listen for storage events across tabs
+    window.addEventListener('storage', function () {
+        renderAdminProperties();
+        loadAdminSettings();
+    });
+});
+
+function showToast(msg) {
+    const toast = document.getElementById('admin-toast');
+    const toastMsg = document.getElementById('admin-toast-msg');
+    toastMsg.textContent = msg;
+    toast.style.display = 'flex';
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 4000);
+}
+
+function renderAdminProperties() {
+    const props = PropertyStore.getAll();
+    const tbody = document.getElementById('admin-properties-tbody');
+    const totalCount = document.getElementById('widget-total-count');
+    const availCount = document.getElementById('widget-available-count');
+    const tableCount = document.getElementById('table-prop-count');
+
+    if (totalCount) totalCount.textContent = props.length;
+    if (tableCount) tableCount.textContent = props.length;
+    if (availCount) {
+        const available = props.filter(p => p.status === 'Available').length;
+        availCount.textContent = available;
+    }
+
+    if (!tbody) return;
+
+    if (props.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--admin-muted);">No properties found. Click "+ Add New Property" above to create one.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = props.map(p => {
+        const statusBadge = p.status === 'Available'
+            ? '<span class="badge badge-completed">Available</span>'
+            : (p.status === 'Upcoming' ? '<span class="badge badge-contacted">Upcoming</span>' : '<span class="badge badge-new">Sold</span>');
+        
+        const featuredBadge = p.is_featured
+            ? '<span style="color: #facc15; font-weight: 600;">&#9733; Featured</span>'
+            : '<span style="color: var(--admin-muted);">-</span>';
+
+        const sampleTag = p.is_sample ? '<span style="font-size: 0.7rem; color: #a8a29e; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 3px; margin-left: 6px;">Sample</span>' : '';
+
+        return `
+            <tr>
+                <td>
+                    <img src="${p.cover_image || 'assets/img/property-1.svg'}" alt="${p.title}" style="width: 55px; height: 38px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(198,161,91,0.3);">
+                </td>
+                <td>
+                    <strong style="color: var(--text-cream);">${p.title}</strong> ${sampleTag}
+                    <div style="font-size: 0.78rem; color: var(--gold-primary);">${p.location}</div>
+                </td>
+                <td>${p.category}</td>
+                <td><strong style="color: var(--gold-bright);">${p.price_display || PropertyStore.formatINR(p.price)}</strong></td>
+                <td style="font-size: 0.82rem; color: var(--admin-muted);">
+                    ${p.area_sqft ? p.area_sqft.toLocaleString() + ' sq.ft' : ''} 
+                    ${p.bedrooms ? '&bull; ' + p.bedrooms + 'B/' + (p.bathrooms || p.bedrooms) + 'B' : ''}
+                </td>
+                <td>${statusBadge}</td>
+                <td>${featuredBadge}</td>
+                <td style="text-align: right; white-space: nowrap;">
+                    <button type="button" class="table-action-btn" onclick="editProperty(${p.id})">&#9998; Edit</button>
+                    <button type="button" class="table-action-btn table-action-del" onclick="deleteProperty(${p.id})">&#10006; Delete</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function loadAdminSettings() {
+    const auth = PropertyStore.getAdminAuth();
+    const settings = PropertyStore.getSettings();
+
+    // Update sidebar username
+    const sidebarUser = document.getElementById('sidebar-admin-user');
+    if (sidebarUser) sidebarUser.textContent = auth.username || 'admin';
+
+    // Populate inline settings form
+    if (document.getElementById('conf-username')) document.getElementById('conf-username').value = auth.username || 'admin';
+    if (document.getElementById('conf-password')) document.getElementById('conf-password').value = auth.password || 'admin123';
+    if (document.getElementById('conf-name')) document.getElementById('conf-name').value = auth.name || 'Magaram Senior Director';
+
+    if (document.getElementById('conf-phone')) document.getElementById('conf-phone').value = settings.contact_phone || '+91 98430 12345';
+    if (document.getElementById('conf-email')) document.getElementById('conf-email').value = settings.contact_email || 'contact@magaramrealestate.com';
+    if (document.getElementById('conf-address')) document.getElementById('conf-address').value = settings.office_address || 'Magaram Towers, Level 5, Race Course Road, Coimbatore, Tamil Nadu - 641018';
+
+    // Populate modal form
+    if (document.getElementById('m-username')) document.getElementById('m-username').value = auth.username || 'admin';
+    if (document.getElementById('m-password')) document.getElementById('m-password').value = auth.password || 'admin123';
+    if (document.getElementById('m-name')) document.getElementById('m-name').value = auth.name || 'Magaram Senior Director';
+    if (document.getElementById('m-phone')) document.getElementById('m-phone').value = settings.contact_phone || '+91 98430 12345';
+    if (document.getElementById('m-email')) document.getElementById('m-email').value = settings.contact_email || 'contact@magaramrealestate.com';
+    if (document.getElementById('m-address')) document.getElementById('m-address').value = settings.office_address || 'Magaram Towers, Level 5, Race Course Road, Coimbatore, Tamil Nadu - 641018';
+}
+
+function saveCredentialsAndSettings(e) {
+    e.preventDefault();
+    const authData = {
+        username: document.getElementById('conf-username').value.trim(),
+        password: document.getElementById('conf-password').value.trim(),
+        name: document.getElementById('conf-name').value.trim()
+    };
+
+    const settingsData = {
+        contact_phone: document.getElementById('conf-phone').value.trim(),
+        contact_email: document.getElementById('conf-email').value.trim(),
+        office_address: document.getElementById('conf-address').value.trim()
+    };
+
+    PropertyStore.setAdminAuth(authData);
+    PropertyStore.setSettings(settingsData);
+    loadAdminSettings();
+    showToast('Admin Credentials & Coimbatore Contact Details Saved Successfully!');
+}
+
+function handleCredentialsModalSubmit(e) {
+    e.preventDefault();
+    const authData = {
+        username: document.getElementById('m-username').value.trim(),
+        password: document.getElementById('m-password').value.trim(),
+        name: document.getElementById('m-name').value.trim()
+    };
+
+    const settingsData = {
+        contact_phone: document.getElementById('m-phone').value.trim(),
+        contact_email: document.getElementById('m-email').value.trim(),
+        office_address: document.getElementById('m-address').value.trim()
+    };
+
+    PropertyStore.setAdminAuth(authData);
+    PropertyStore.setSettings(settingsData);
+    loadAdminSettings();
+    closeCredentialsModal();
+    showToast('Admin Credentials & Coimbatore Contact Details Saved Successfully!');
+}
+
+function togglePasswordVisibility() {
+    const input = document.getElementById('conf-password');
+    if (input.type === 'password') {
+        input.type = 'text';
+    } else {
+        input.type = 'password';
+    }
+}
+
+// Property Modal Management
+function openAddPropertyModal() {
+    document.getElementById('prop-modal-title').textContent = '+ Add New Coimbatore Property';
+    document.getElementById('form-prop-id').value = '';
+    document.getElementById('property-form').reset();
+    document.getElementById('price-hint').textContent = '';
+    document.getElementById('form-location-custom').style.display = 'none';
+    document.getElementById('btn-save-prop').textContent = 'Save & Publish Live';
+    document.getElementById('property-modal').classList.add('active');
+}
+
+function closePropertyModal() {
+    document.getElementById('property-modal').classList.remove('active');
+}
+
+function openCredentialsModal() {
+    loadAdminSettings();
+    document.getElementById('credentials-modal').classList.add('active');
+}
+
+function closeCredentialsModal() {
+    document.getElementById('credentials-modal').classList.remove('active');
+}
+
+function checkCustomLocation(select) {
+    const custom = document.getElementById('form-location-custom');
+    if (select.value === 'custom') {
+        custom.style.display = 'block';
+        custom.required = true;
+    } else {
+        custom.style.display = 'none';
+        custom.required = false;
+    }
+}
+
+function handlePropertySubmit(e) {
+    e.preventDefault();
+    const id = document.getElementById('form-prop-id').value;
+    const title = document.getElementById('form-title').value.trim();
+    const category = document.getElementById('form-category').value;
+    
+    let location = document.getElementById('form-location').value;
+    if (location === 'custom') {
+        location = document.getElementById('form-location-custom').value.trim() || 'Coimbatore';
+    }
+
+    const price = Number(document.getElementById('form-price').value);
+    const area_sqft = Number(document.getElementById('form-area').value);
+    const bedrooms = Number(document.getElementById('form-bedrooms').value);
+    const bathrooms = Number(document.getElementById('form-bathrooms').value);
+    const status = document.getElementById('form-status').value;
+    const cover_image = document.getElementById('form-cover').value;
+    const description = document.getElementById('form-desc').value.trim();
+    const is_featured = document.getElementById('form-featured').checked ? 1 : 0;
+
+    const propData = {
+        title,
+        category,
+        location,
+        price,
+        price_display: PropertyStore.formatINR(price),
+        area_sqft,
+        bedrooms,
+        bathrooms,
+        status,
+        cover_image,
+        description,
+        is_featured
+    };
+
+    if (id) {
+        PropertyStore.update(id, propData);
+        showToast('Property updated successfully! Reflected live across portal.');
+    } else {
+        PropertyStore.add(propData);
+        showToast('New property published live! Reflected on public website.');
+    }
+
+    closePropertyModal();
+    renderAdminProperties();
+}
+
+function editProperty(id) {
+    const p = PropertyStore.getById(id);
+    if (!p) return;
+
+    document.getElementById('prop-modal-title').textContent = 'Edit Property: ' + p.title;
+    document.getElementById('form-prop-id').value = p.id;
+    document.getElementById('form-title').value = p.title;
+    document.getElementById('form-category').value = p.category;
+    
+    const locSelect = document.getElementById('form-location');
+    const customInput = document.getElementById('form-location-custom');
+    let matched = false;
+    for (let opt of locSelect.options) {
+        if (opt.value === p.location) {
+            locSelect.value = p.location;
+            customInput.style.display = 'none';
+            matched = true;
+            break;
+        }
+    }
+    if (!matched) {
+        locSelect.value = 'custom';
+        customInput.style.display = 'block';
+        customInput.value = p.location;
+    }
+
+    document.getElementById('form-price').value = p.price;
+    document.getElementById('price-hint').textContent = 'Formatted Valuation: ' + (p.price_display || PropertyStore.formatINR(p.price));
+    document.getElementById('form-area').value = p.area_sqft;
+    document.getElementById('form-bedrooms').value = p.bedrooms;
+    document.getElementById('form-bathrooms').value = p.bathrooms;
+    document.getElementById('form-status').value = p.status;
+    document.getElementById('form-cover').value = p.cover_image || 'assets/img/property-1.svg';
+    document.getElementById('form-desc').value = p.description;
+    document.getElementById('form-featured').checked = !!p.is_featured;
+
+    document.getElementById('btn-save-prop').textContent = 'Update Property';
+    document.getElementById('property-modal').classList.add('active');
+}
+
+function deleteProperty(id) {
+    const p = PropertyStore.getById(id);
+    if (!p) return;
+
+    if (confirm(`Are you sure you want to remove "${p.title}" from the live portfolio?`)) {
+        PropertyStore.delete(id);
+        renderAdminProperties();
+        showToast('Property removed from portfolio and live website.');
+    }
+}
+</script>
+
 </body>
 </html>
-

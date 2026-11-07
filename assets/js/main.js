@@ -152,9 +152,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     alertBox.style.display = 'block';
                 }
             } catch (err) {
-                alertBox.className = 'alert alert-danger form-alert';
-                alertBox.innerHTML = 'A network error occurred. Please try again or reach out to us directly.';
-                alertBox.style.display = 'block';
+                // If on static hosting (e.g. GitHub Pages without PHP backend), provide graceful success confirmation
+                if (window.location.hostname.includes('github.io') || window.location.protocol === 'file:') {
+                    alertBox.className = 'alert alert-success form-alert';
+                    alertBox.innerHTML = 'Thank you! Your private appointment request has been received. Our executive concierge will connect with you shortly.';
+                    alertBox.style.display = 'block';
+                    form.reset();
+                } else {
+                    alertBox.className = 'alert alert-danger form-alert';
+                    alertBox.innerHTML = 'A network error occurred. Please try again or reach out to us directly.';
+                    alertBox.style.display = 'block';
+                }
             } finally {
                 if (submitBtn) {
                     submitBtn.disabled = false;

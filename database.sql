@@ -144,10 +144,10 @@ ON DUPLICATE KEY UPDATE `name` = `name`;
 -- Seed Site Settings (With sample markers as specified in Work Plan)
 INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES
 ('site_name', 'Magaram Real Estate'),
-('tagline', 'Curating Extraordinary Living Spaces'),
+('tagline', 'Curating Extraordinary Living Spaces in Coimbatore'),
 ('contact_email', 'contact@magaramrealestate.com'),
-('contact_phone', '+91 98765 43210'),
-('office_address', 'Magaram Towers, Level 14, Prestige Boulevard, Jubilee Hills, Hyderabad, India'),
+('contact_phone', '+91 98430 12345'),
+('office_address', 'Magaram Towers, Level 5, Race Course Road, Coimbatore, Tamil Nadu - 641018'),
 ('hero_headline_1', 'Experience'),
 ('hero_headline_2', 'Luxury Living'),
 ('hero_subtext', 'Bespoke residences, signature penthouses, and prime commercial estates crafted with architectural precision.'),
@@ -162,32 +162,32 @@ INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES
 ('stat_4_val', '99.2%'),
 ('stat_4_lbl', 'Client Satisfaction [Sample]'),
 ('show_testimonials', '1'),
-('about_preview', 'At Magaram Real Estate, we bridge discerning patrons with timeless architectural masterworks. Our portfolio is curated exclusively for those who view real estate not simply as assets, but as legacies of distinction.'),
-('map_embed_url', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.6669939527643!2d78.40698717594732!3d17.42777170163351!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb96cd3d1f1f1f%3A0x8898124231234567!2sJubilee%20Hills%2C%20Hyderabad!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin')
+('about_preview', 'At Magaram Real Estate, we bridge discerning patrons with timeless architectural masterworks across Coimbatore and the Western Ghats foothills.'),
+('map_embed_url', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.326292398491!2d76.9712165757467!3d11.01183348915159!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba859ad33cfd2db%3A0x8aa50c60f4ff2b7!2sRace%20Course%2C%20Coimbatore%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin')
 ON DUPLICATE KEY UPDATE `setting_key` = `setting_key`;
 
 -- Seed Default Services
 INSERT INTO `services` (`title`, `description`, `icon`, `sort_order`) VALUES
-('Luxury Residential Brokerage', 'Exclusive representation for high-net-worth individuals acquiring premier penthouses, villas, and sprawling estates.', 'home', 1),
-('Signature Commercial Spaces', 'Advising corporations and private investors on trophy office towers, premium retail, and high-yield commercial assets.', 'building', 2),
+('Luxury Residential Brokerage', 'Exclusive representation for high-net-worth individuals acquiring premier penthouses, villas, and sprawling estates in Coimbatore.', 'home', 1),
+('Signature Commercial Spaces', 'Advising corporations and private investors on trophy office towers, IT corridor campuses, and commercial assets.', 'building', 2),
 ('Private Investment Advisory', 'Strategic real estate portfolio planning, acquisition vetting, and high-capital appreciation opportunity sourcing.', 'trending-up', 3),
 ('Bespoke Architectural Project Management', 'Turnkey management from concept blueprint to interior finishing for bespoke estate developments.', 'compass', 4)
 ON DUPLICATE KEY UPDATE `title` = `title`;
 
 -- Seed Sample Testimonials (Marked clearly as sample data)
 INSERT INTO `testimonials` (`name`, `designation`, `text`, `rating`, `is_approved`, `is_sample`) VALUES
-('Vikramaditya Rao', 'Founder, Apex Capital [Sample]', 'Magaram delivered an experience beyond what traditional real estate firms offer. The level of privacy, architectural insight, and seamless transaction for our Jubilee Hills villa was unmatched.', 5, 1, 1),
-('Dr. Aisha Merchant', 'Chief Neurosurgeon [Sample]', 'From private viewings to closing paperwork, every single detail was handled with precision and dignity. Truly the gold standard of luxury real estate advisory.', 5, 1, 1),
-('Rajeshwari Devi', 'Industrialist & Art Collector [Sample]', 'Finding a property that accommodated our curated gallery and private grounds seemed impossible until Magaram brought us their off-market collection.', 5, 1, 1);
+('Vikramaditya Rao', 'Founder, Apex Capital [Sample]', 'Magaram delivered an experience beyond what traditional firms offer. The level of privacy, architectural insight, and seamless transaction for our Race Course penthouse was unmatched.', 5, 1, 1),
+('Dr. Aisha Merchant', 'Chief Neurosurgeon [Sample]', 'From private viewings to closing paperwork, every single detail was handled with precision and dignity. Truly the gold standard of luxury real estate advisory in Coimbatore.', 5, 1, 1),
+('Rajeshwari Devi', 'Industrialist & Art Collector [Sample]', 'Finding a property that accommodated our private grounds in Vadavalli seemed impossible until Magaram brought us their off-market collection.', 5, 1, 1);
 
--- Seed Sample Properties (Marked clearly as sample data)
+-- Seed Sample Properties (Coimbatore luxury portfolio - marked clearly as sample data)
 INSERT INTO `properties` (`id`, `title`, `slug`, `category`, `location`, `price`, `price_display`, `area_sqft`, `bedrooms`, `bathrooms`, `description`, `status`, `is_featured`, `is_sample`) VALUES
-(1, 'The Sovereign Penthouse [Sample]', 'the-sovereign-penthouse', 'Apartment', 'Jubilee Hills, Hyderabad', 145000000.00, '₹14.50 Cr', 6800, 5, 6, 'A magnificent double-height triplex penthouse offering 360-degree skyline vistas. Features private elevator access, an 800 sq.ft wrap-around sky deck with heated infinity plunge pool, imported Calacatta marble, and custom smart automation tailored for royalty.', 'Available', 1, 1),
-(2, 'The Elysian Garden Villa [Sample]', 'the-elysian-garden-villa', 'Villa', 'Gachibowli Outer Ring, Hyderabad', 220000000.00, '₹22.00 Cr', 9200, 6, 7, 'Set across a private 1.2-acre manicured plot, this contemporary masterpiece combines Mediterranean stone facades with floor-to-ceiling acoustic glass walls, private temperature-controlled wine cellar, serene reflecting ponds, and staff quarters.', 'Available', 1, 1),
-(3, 'Prestige Crown Commercial Tower [Sample]', 'prestige-crown-commercial-tower', 'Commercial', 'Hitec City, Financial District', 480000000.00, '₹48.00 Cr', 35000, 0, 12, 'LEED Platinum-certified Grade A commercial headquarters. Designed for global enterprise operations with column-free floor plates, high-speed destination-controlled elevators, and state-of-the-art HVAC air-purification.', 'Available', 1, 1),
-(4, 'The Aurum Signature Residence [Sample]', 'the-aurum-signature-residence', 'Apartment', 'Banjara Hills, Hyderabad', 98000000.00, '₹9.80 Cr', 4600, 4, 4, 'An ultra-exclusive single-floor apartment in a boutique 8-unit development. Boasts soundproofed acoustic suites, private master retreat with walk-in custom Italian wardrobes, and panoramic green valley views.', 'Available', 1, 1),
-(5, 'Serene Palms Estate [Sample]', 'serene-palms-estate', 'Villa', 'Moinabad Green Valley', 185000000.00, '₹18.50 Cr', 8400, 5, 6, 'An oasis of peace featuring an Olympic-grade private pool, manicured fruit orchards, independent clubhouse pavilion, and state-of-the-art perimeter security.', 'Upcoming', 1, 1),
-(6, 'The Opus Pinnacle Suites [Sample]', 'the-opus-pinnacle-suites', 'Commercial', 'Madhapur Tech Corridor', 320000000.00, '₹32.00 Cr', 24000, 0, 8, 'Premium corporate floor plates ready for luxury brand flagships, boutique legal chambers, or international fintech hubs.', 'Sold', 0, 1)
+(1, 'The Sovereign Penthouse [Sample]', 'the-sovereign-penthouse-coimbatore', 'Apartment', 'Race Course, Coimbatore', 85000000.00, '₹8.50 Cr', 5600, 4, 5, 'An ultra-exclusive double-height penthouse overlooking the lush green canopy of Race Course Road in Coimbatore. Features private biometric elevator access, an expansive open terrace with sky deck plunge pool, imported Calacatta marble, and 360-degree skyline vistas.', 'Available', 1, 1),
+(2, 'The Elysian Sanctuary Villa [Sample]', 'the-elysian-sanctuary-villa-vadavalli', 'Villa', 'Vadavalli Foothills, Coimbatore', 125000000.00, '₹12.50 Cr', 8200, 5, 6, 'Set against the serene Western Ghats foothills in Vadavalli, this contemporary architectural estate features landscaped courtyards, natural stone facades, private temperature-controlled pool, home automation, and staff quarters.', 'Available', 1, 1),
+(3, 'Prestige Apex Commercial Tower [Sample]', 'prestige-apex-commercial-peelamedu', 'Commercial', 'Avinashi Road, Peelamedu, Coimbatore', 360000000.00, '₹36.00 Cr', 28000, 0, 10, 'Grade-A corporate commercial tower positioned along Coimbatore\'s prime Avinashi Road arterial corridor. LEED Gold certified, high-speed destination elevators, column-free floor plates, and executive boardroom suites.', 'Available', 1, 1),
+(4, 'The Aurum Signature Suites [Sample]', 'the-aurum-signature-suites-rs-puram', 'Apartment', 'R.S. Puram, Coimbatore', 68000000.00, '₹6.80 Cr', 4200, 4, 4, 'A boutique development of private single-floor residences in the heart of heritage R.S. Puram. Featuring soundproof acoustic glazing, private master suite with custom walk-in dressing chambers, and Italian modular fittings.', 'Available', 1, 1),
+(5, 'Serene Palm Orchards Estate [Sample]', 'serene-palm-orchards-thondamuthur', 'Villa', 'Siruvani Foothills, Coimbatore', 145000000.00, '₹14.50 Cr', 9500, 6, 7, 'Sprawling private gated farm estate with organic coconut orchards, Olympic-length private swimming pool, independent guest clubhouse pavilion, and 24/7 security perimeter.', 'Upcoming', 1, 1),
+(6, 'The Opus Tech Pinnacle [Sample]', 'the-opus-tech-pinnacle-saravanampatti', 'Commercial', 'Saravanampatti IT Corridor, Coimbatore', 240000000.00, '₹24.00 Cr', 22000, 0, 8, 'High-yield commercial tech headquarters designed for global SaaS and engineering enterprises in Coimbatore\'s premier IT hub.', 'Sold', 0, 1)
 ON DUPLICATE KEY UPDATE `title` = `title`;
 
 -- Property Amenities Links
