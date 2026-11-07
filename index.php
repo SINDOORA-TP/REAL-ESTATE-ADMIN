@@ -10,3 +10,4 @@ if (is_admin_logged_in()) {
 } else {
     redirect(BASE_URL . '/login.php');
 }
+

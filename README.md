@@ -50,3 +50,4 @@ The dedicated administrative and property portfolio management portal for **Maga
 php -S localhost:8001
 ```
 Open `http://localhost:8001` in your browser.
+

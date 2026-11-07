@@ -19,3 +19,4 @@ uploads/properties/*
 uploads/brochures/*
 !uploads/brochures/.gitkeep
 uploads/.htaccess
+

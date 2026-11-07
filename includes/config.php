@@ -64,3 +64,4 @@ define('ALLOWED_IMAGE_EXTS', ['jpg', 'jpeg', 'png', 'webp', 'avif']);
 
 // Admin Email
 define('ADMIN_EMAIL', 'admin@magaramrealestate.com');
+

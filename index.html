@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magaram Executive Suite | Admin Portal</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            <img src="assets/img/magaram-logo.svg" alt="Magaram Crest" width="32" height="32">
+            <div>
+                <strong style="color: var(--text-cream); font-size: 0.95rem; letter-spacing: 0.05em;">MAGARAM</strong>
+                <div style="font-size: 0.65rem; color: var(--gold-bright); letter-spacing: 0.15em;">EXECUTIVE SUITE</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="index.html" class="sidebar-link active">
+                <span>&#9638;</span> Dashboard
+            </a>
+            <a href="#properties-section" class="sidebar-link">
+                <span>&#9751;</span> Properties
+            </a>
+            <a href="#enquiries-section" class="sidebar-link">
+                <span>&#9993;</span> Enquiries &amp; Leads
+            </a>
+            <a href="#testimonials-section" class="sidebar-link">
+                <span>&#9733;</span> Testimonials
+            </a>
+            <a href="#gallery-section" class="sidebar-link">
+                <span>&#9734;</span> Gallery
+            </a>
+            <a href="#settings-section" class="sidebar-link">
+                <span>&#9881;</span> Site Settings &amp; Stats
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div style="color: var(--gold-bright); font-size: 0.8rem; margin-bottom: 6px;">Logged in as: <strong>Admin</strong></div>
+            <a href="https://sindoora-tp.github.io/REAL-ESTATE/" target="_blank" style="color: var(--admin-muted); font-size: 0.8rem;">&larr; View Live Website</a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+        <header class="admin-topbar">
+            <div>
+                <h2 style="font-size: 1.35rem; margin: 0; color: var(--text-cream);">Executive Control Panel</h2>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary btn-sm" onclick="alert('In production, this opens the add property form. All PHP endpoints are in the repository.');">
+                    + Add New Property
+                </button>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            <!-- Statistics Overview Grid -->
+            <div class="stat-widgets-grid">
+                <div class="widget-box">
+                    <div class="widget-label">Total Properties</div>
+                    <div class="widget-value">6</div>
+                    <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">In Active Portfolio</div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-label">Available for Acquisition</div>
+                    <div class="widget-value" style="color: #4ade80;">4</div>
+                    <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">Ready for viewings</div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-label">Total Inquiries Received</div>
+                    <div class="widget-value">12</div>
+                    <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">Leads captured</div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-label">New / Pending Leads</div>
+                    <div class="widget-value" style="color: #60a5fa;">3</div>
+                    <div style="font-size: 0.78rem; color: var(--admin-muted); margin-top: 4px;">Requires outreach</div>
+                </div>
+            </div>
+
+            <!-- Properties Table -->
+            <div class="admin-card" id="properties-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="font-size: 1.15rem; color: var(--text-cream); margin: 0;">Portfolio Listings (6)</h3>
+                        <p style="font-size: 0.82rem; color: var(--admin-muted); margin-top: 2px;">Manage all public and off-market estate listings.</p>
+                    </div>
+                </div>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 70px;">Cover</th>
+                            <th>Title &amp; Location</th>
+                            <th>Category</th>
+                            <th>Valuation</th>
+                            <th>Specs</th>
+                            <th>Status</th>
+                            <th>Featured</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><img src="assets/img/property-1.svg" alt="" style="width: 55px; height: 38px; object-fit: cover; border-radius: 4px;"></td>
+                            <td>
+                                <strong style="color: var(--text-cream);">The Sovereign Penthouse [Sample]</strong>
+                                <div style="font-size: 0.78rem; color: var(--gold-primary);">Jubilee Hills, Hyderabad</div>
+                            </td>
+                            <td>Apartment</td>
+                            <td><strong style="color: var(--gold-bright);">₹14.50 Cr</strong></td>
+                            <td style="font-size: 0.82rem; color: var(--admin-muted);">6,800 sq.ft &bull; 5B/6B</td>
+                            <td><span class="badge badge-completed">Available</span></td>
+                            <td><span style="color: #facc15;">&#9733; Featured</span></td>
+                        </tr>
+                        <tr>
+                            <td><img src="assets/img/property-2.svg" alt="" style="width: 55px; height: 38px; object-fit: cover; border-radius: 4px;"></td>
+                            <td>
+                                <strong style="color: var(--text-cream);">The Elysian Garden Villa [Sample]</strong>
+                                <div style="font-size: 0.78rem; color: var(--gold-primary);">Gachibowli Outer Ring, Hyderabad</div>
+                            </td>
+                            <td>Villa</td>
+                            <td><strong style="color: var(--gold-bright);">₹22.00 Cr</strong></td>
+                            <td style="font-size: 0.82rem; color: var(--admin-muted);">9,200 sq.ft &bull; 6B/7B</td>
+                            <td><span class="badge badge-completed">Available</span></td>
+                            <td><span style="color: #facc15;">&#9733; Featured</span></td>
+                        </tr>
+                        <tr>
+                            <td><img src="assets/img/property-3.svg" alt="" style="width: 55px; height: 38px; object-fit: cover; border-radius: 4px;"></td>
+                            <td>
+                                <strong style="color: var(--text-cream);">Prestige Crown Commercial Tower [Sample]</strong>
+                                <div style="font-size: 0.78rem; color: var(--gold-primary);">Hitec City, Financial District</div>
+                            </td>
+                            <td>Commercial</td>
+                            <td><strong style="color: var(--gold-bright);">₹48.00 Cr</strong></td>
+                            <td style="font-size: 0.82rem; color: var(--admin-muted);">35,000 sq.ft</td>
+                            <td><span class="badge badge-completed">Available</span></td>
+                            <td><span style="color: #facc15;">&#9733; Featured</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Recent Inquiries Table -->
+            <div class="admin-card" id="enquiries-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 1.15rem; color: var(--text-cream); margin: 0;">Recent Client Inquiries</h3>
+                </div>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Client Name</th>
+                            <th>Phone</th>
+                            <th>Type</th>
+                            <th>Property Interest</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Today, 10:15</td>
+                            <td>
+                                <strong>Vikramaditya Rao</strong><br>
+                                <span style="font-size: 0.78rem; color: var(--admin-muted);">vikram@apex.in</span>
+                            </td>
+                            <td>+91 98765 43210</td>
+                            <td><span style="color: var(--gold-bright); font-weight: 600;">Site Visit</span></td>
+                            <td>The Sovereign Penthouse</td>
+                            <td><span class="badge badge-new">New</span></td>
+                        </tr>
+                        <tr>
+                            <td>Yesterday, 16:40</td>
+                            <td>
+                                <strong>Dr. Aisha Merchant</strong><br>
+                                <span style="font-size: 0.78rem; color: var(--admin-muted);">aisha@hospital.org</span>
+                            </td>
+                            <td>+91 98111 22334</td>
+                            <td><span style="color: var(--gold-bright); font-weight: 600;">Brochure</span></td>
+                            <td>The Elysian Garden Villa</td>
+                            <td><span class="badge badge-contacted">Contacted</span></td>
+                        </tr>
+                        <tr>
+                            <td>04 Nov, 14:20</td>
+                            <td>
+                                <strong>Karan Singhania</strong><br>
+                                <span style="font-size: 0.78rem; color: var(--admin-muted);">karan@singhania.com</span>
+                            </td>
+                            <td>+91 99999 88888</td>
+                            <td><span style="color: var(--gold-bright); font-weight: 600;">Enquiry</span></td>
+                            <td>Prestige Crown Commercial</td>
+                            <td><span class="badge badge-completed">Completed</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

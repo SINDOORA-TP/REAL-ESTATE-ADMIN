@@ -240,20 +240,12 @@ function safe_upload_image(array $file, string $targetDir): array {
 }
 
 /**
- * Send Email Notification (supports mail() and placeholder for SMTP / PHPMailer)
+ * Send Email Notification (Native SMTP with TLS & mail() fallback)
  */
 function send_admin_notification(string $subject, string $body): bool {
-    $to = ADMIN_EMAIL;
-    $headers = [
-        'MIME-Version: 1.0',
-        'Content-type: text/html; charset=utf-8',
-        'From: ' . SMTP_FROM_NAME . ' <' . SMTP_USER . '>',
-        'Reply-To: ' . ADMIN_EMAIL,
-        'X-Mailer: PHP/' . phpversion()
-    ];
-
-    // Attempt native mail() - in production with PHPMailer, inject SMTP client here
-    return @mail($to, $subject, $body, implode("\r\n", $headers));
+    require_once __DIR__ . '/smtp.php';
+    $mailer = new LuxuryMailer();
+    return $mailer->send(ADMIN_EMAIL, $subject, $body);
 }
 
 /**
